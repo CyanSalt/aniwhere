@@ -147,23 +147,26 @@ export default {
               return file.slice(-extname.length) === extname
             })
             if (ext) {
-              const name = basename(file, ext)
-              const program = {name, path: fullpath}
-              callback(program)
+              callback({
+                name: file,
+                basename: basename(file, ext),
+                path: fullpath,
+              })
             }
           })
         }
       })
     },
-    matchFile(program, value) {
-      return program.name.indexOf(value) !== -1
+    matchFile(file, value) {
+      return file.name.indexOf(value) !== -1
     },
     getFileEntry(category, file) {
       return {
         type: 'file',
         category,
         link: file.path,
-        text: file.name
+        text: category === 'program' ?
+          file.basename : file.name
       }
     },
   },
