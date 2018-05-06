@@ -28,9 +28,16 @@ export default {
 
 <style>
 .suggestion-item {
-  padding: 8px 16px;
+  margin: 8px 12px;
+  padding: 6px 12px;
+  border-radius: 4px;
   line-height: 24px;
   cursor: pointer;
+  transition: background-color ease 0.2s;
+}
+.suggestion-item:focus {
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.08);
 }
 .suggestion-item::before {
   content: '';
