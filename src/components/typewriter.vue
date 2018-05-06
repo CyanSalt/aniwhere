@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     focus() {
-      this.$flux.emit('suggestions/reset')
+      this.$flux.emit('suggestions/select', -1)
     }
   }
 }

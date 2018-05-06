@@ -1,5 +1,5 @@
 <template>
-  <li :class="['suggestion-item', data.category]"
+  <li :class="['suggestion-item', data.category]" :tabindex="index"
     @click="select" @keyup.enter="select">{{ data.text }}</li>
 </template>
 
@@ -9,6 +9,7 @@ import {remote} from 'electron'
 export default {
   props: {
     data: Object,
+    index: Number,
     active: {
       type: Boolean,
       default: false,
@@ -16,6 +17,7 @@ export default {
   },
   methods: {
     select() {
+      this.$flux.emit('suggestions/focus', this.index)
       if (this.data.type === 'hyperlink') {
         remote.shell.openExternal(this.data.url)
         remote.getCurrentWindow().hide()

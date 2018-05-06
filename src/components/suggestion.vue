@@ -1,7 +1,8 @@
 <template>
   <ul class="suggestion">
     <suggestion-item v-for="item, index in suggestions" :key="index"
-      :data="item" :active="index === selected" :tabindex="index"></suggestion-item>
+      :index="index" :data="item" :active="index === selected"
+      ></suggestion-item>
   </ul>
 </template>
 
@@ -33,7 +34,7 @@ export default {
     this.$flux.on('suggestions/toggle', step => {
       const target = this.selected + step
       if (target < 0) {
-        // Note: `input/focus` will trigger `reset`
+        // Note: `input/focus` will trigger `focus`
         this.$flux.emit('input/focus')
         return
       }
@@ -42,8 +43,8 @@ export default {
         this.$children[target].$el.focus()
       }
     })
-    this.$flux.on('suggestions/reset', () => {
-      this.reset()
+    this.$flux.on('suggestions/focus', target => {
+      this.selected = target
     })
   },
   methods: {
@@ -85,9 +86,6 @@ export default {
         text: this.i18n('Search by %N: %W#!2')
           .replace('%N', engine.name).replace('%W', value)
       }))
-    },
-    reset() {
-      this.selected = -1
     },
   },
 }
