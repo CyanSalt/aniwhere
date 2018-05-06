@@ -7,7 +7,7 @@
 
 <script>
 import debounce from 'lodash.debounce'
-import {ipcRenderer} from 'electron'
+import {ipcRenderer, remote} from 'electron'
 import SuggestionItem from './suggestion-item'
 
 export default {
@@ -27,10 +27,14 @@ export default {
   },
   methods: {
     resize() {
-      // TODO: Compare with current size
       this.$nextTick(() => {
-        // Resize with margin size of body
-        ipcRenderer.send('resize/height', document.body.scrollHeight + 12)
+        const frame = remote.getCurrentWindow()
+        const height = document.body.scrollHeight + 12
+        const [width, originalHeight] = frame.getSize()
+        if (height !== originalHeight) {
+          // Resize with margin size of body
+          ipcRenderer.send('resize', width, height)
+        }
       })
     },
     search(value) {
