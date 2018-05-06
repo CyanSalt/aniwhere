@@ -1,0 +1,21 @@
+@font-face {
+  font-style: normal;
+  font-family: 'Aniwhere UI';
+  src: local('Noto Sans CJK SC'), local('PingFang SC'),
+    url("../../fonts/NotoSansCJKsc-Regular.otf")
+}
+
+body {
+  margin: 6px;
+  font-family: 'Aniwhere UI';
+  color: #343d46;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+::-webkit-scrollbar {
+  background: inherit;
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(170, 170, 170, 0.5);
+}
