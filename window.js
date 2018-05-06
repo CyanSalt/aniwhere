@@ -9,6 +9,10 @@ let tray = null
 function init() {
   tray = new Tray('./src/assets/images/icon.png')
   tray.setContextMenu(createVisibleMenu())
+  tray.setToolTip('Aniwhere')
+  tray.on('double-click', () => {
+    toggleFrame()
+  })
 
   frame = new BrowserWindow({
     title: 'Aniwhere',
@@ -69,14 +73,7 @@ function createVisibleMenu() {
     {
       label: 'Toggle',
       click() {
-        if (!frame) {
-          return
-        }
-        if (frame.isVisible()) {
-          frame.hide()
-        } else {
-          frame.show()
-        }
+        toggleFrame()
       }
     },
     {
@@ -92,6 +89,17 @@ function transferEvents() {
   ipcMain.on('resize', (e, width, height) => {
     frame && frame.setSize(width, height)
   })
+}
+
+function toggleFrame() {
+  if (!frame) {
+    return
+  }
+  if (frame.isVisible()) {
+    frame.hide()
+  } else {
+    frame.show()
+  }
 }
 
 const second = app.makeSingleInstance((argv, directory) => {
