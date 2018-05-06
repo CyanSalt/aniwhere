@@ -98,6 +98,8 @@ export default {
   margin: 0;
   padding: 0;
   list-style: none;
+  /* (36 + 8) * 6 + 8 = 272 */
+  max-height: 272px;
   overflow: hidden;
 }
 </style>
