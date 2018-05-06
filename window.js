@@ -10,7 +10,7 @@ function init() {
   frame = new BrowserWindow({
     title: 'Aniwhere',
     width: 600,
-    height: 80,
+    height: 400,
     resizable: false,
     alwaysOnTop: true,
     skipTaskbar: true,

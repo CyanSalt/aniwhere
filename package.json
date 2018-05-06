@@ -16,6 +16,7 @@
   "dependencies": {
     "css-loader": "^0.28.11",
     "electron": "^2.0.0",
+    "lodash.debounce": "^4.0.8",
     "mini-css-extract-plugin": "^0.4.0",
     "vue": "^2.5.16",
     "vue-loader": "^15.0.9",
