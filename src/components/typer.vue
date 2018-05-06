@@ -1,5 +1,5 @@
 <template>
-  <input class="main-input" type="text" v-model="input" :placeholder="i18n('Search Anything#!1')" autofocus>
+  <input class="typer" type="text" v-model="input" :placeholder="i18n('Search Anything#!1')" autofocus>
 </template>
 
 <script>
@@ -13,7 +13,7 @@ export default {
 </script>
 
 <style>
-.main-input {
+.typer {
   -webkit-appearance: none;
   box-sizing: border-box;
   padding: 0 16px;
@@ -27,7 +27,7 @@ export default {
   background: rgba(255, 255, 255, 0.875);
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.1);
 }
-.main-input::placeholder {
+.typer::placeholder {
   color: rgba(0, 0, 0, 0.2);
   font-style: italic;
 }
