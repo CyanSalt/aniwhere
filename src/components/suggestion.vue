@@ -1,7 +1,7 @@
 <template>
   <ul class="suggestion">
     <suggestion-item v-for="item, index in suggestions" :key="index"
-      :data="item"></suggestion-item>
+      :data="item" :active="index === selected" :tabindex="index"></suggestion-item>
   </ul>
 </template>
 
@@ -17,7 +17,8 @@ export default {
   },
   data() {
     return {
-      suggestions: []
+      suggestions: [],
+      selected: -1,
     }
   },
   computed: {
@@ -25,9 +26,25 @@ export default {
   },
   created() {
     this.$flux.on('input/changed', debounce(value => {
+      this.selected = -1
       this.search(value)
       this.resize()
     }, 200))
+    this.$flux.on('suggestions/toggle', step => {
+      const target = this.selected + step
+      if (target < 0) {
+        // Note: `input/focus` will trigger `reset`
+        this.$flux.emit('input/focus')
+        return
+      }
+      if (target < this.suggestions.length) {
+        this.selected = target
+        this.$children[target].$el.focus()
+      }
+    })
+    this.$flux.on('suggestions/reset', () => {
+      this.reset()
+    })
   },
   methods: {
     resize() {
@@ -51,7 +68,6 @@ export default {
         this.queryDocuments(value),
         this.querySearchEngines(value),
       )
-      console.log(value, this.suggestions)
     },
     queryPrograms(value) {
       return []
@@ -64,10 +80,14 @@ export default {
       const encoded = encodeURIComponent(value)
       return engines.map(engine => ({
         type: 'hyperlink',
+        category: 'search-engine',
         url: engine.url.replace('%W', encoded),
         text: this.i18n('Search by %N: %W#!2')
           .replace('%N', engine.name).replace('%W', value)
       }))
+    },
+    reset() {
+      this.selected = -1
     },
   },
 }

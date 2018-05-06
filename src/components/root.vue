@@ -1,8 +1,8 @@
 <template>
-  <div id="main">
-    <typewriter></typewriter>
+  <div id="main" @keydown.up="prev" @keydown.down="next">
+    <typewriter ref="typewriter"></typewriter>
     <div class="divider" v-show="input"></div>
-    <suggestion></suggestion>
+    <suggestion ref="suggestion"></suggestion>
   </div>
 </template>
 
@@ -35,6 +35,24 @@ export default {
     this.$storage.load('settings.json', (err, data) => {
       err || this.$flux.set('global/settings', data)
     })
+  },
+  methods: {
+    prev(e) {
+      if (e.target === this.$refs.typewriter.$el) {
+        const {selectionEnd} = e.target
+        if (selectionEnd !== 0) return
+      }
+      e.preventDefault()
+      this.$flux.emit('suggestions/toggle', -1)
+    },
+    next(e) {
+      if (e.target === this.$refs.typewriter.$el) {
+        const {selectionStart, value} = e.target
+        if (selectionStart !== value.length) return
+      }
+      e.preventDefault()
+      this.$flux.emit('suggestions/toggle', 1)
+    }
   }
 }
 </script>

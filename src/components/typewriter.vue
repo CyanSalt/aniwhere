@@ -1,5 +1,5 @@
 <template>
-  <input class="typewriter" type="text" v-model="input"
+  <input class="typewriter" type="text" v-model="input" @focus="focus"
     :placeholder="i18n('Search Anything#!1')" autofocus>
 </template>
 
@@ -16,6 +16,16 @@ export default {
       }
     }
   },
+  created() {
+    this.$flux.on('input/focus', () => {
+      this.$el.focus()
+    })
+  },
+  methods: {
+    focus() {
+      this.$flux.emit('suggestions/reset')
+    }
+  }
 }
 </script>
 
