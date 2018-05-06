@@ -1,0 +1,14 @@
+{
+  "suggestions.searchEngines": [
+    {
+      "name": "Google",
+      "url": "https://www.google.com/search?q=%W"
+    }
+  ],
+  "suggestions.programPaths": [
+    "%ProgramData%\\Microsoft\\Windows\\Start Menu\\Programs",
+    "%AppData%\\Microsoft\\Windows\\Start Menu\\Programs"
+  ],
+  "suggestions.programExts": [".exe", ".lnk"],
+  "suggestions.caching": 60
+}

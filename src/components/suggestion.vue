@@ -84,7 +84,7 @@ export default {
     queryPrograms(value) {
       const paths = this.settings['suggestions.programPaths'] || []
       const exts = this.settings['suggestions.programExts'] || []
-      const duration = this.settings['suggestions.caching'] || 60
+      const duration = this.settings['suggestions.caching'] || 0
       const cache = this.cache.programs
       if (this.searchedAt - cache.cachedAt < duration * 1000) {
         return cache.list
