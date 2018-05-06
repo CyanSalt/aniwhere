@@ -1,4 +1,7 @@
-const {app, BrowserWindow, Menu, Tray, globalShortcut} = require('electron')
+const {
+  app, BrowserWindow, Menu, Tray,
+  globalShortcut, ipcMain
+} = require('electron')
 
 let frame = null
 let tray = null
@@ -10,7 +13,7 @@ function init() {
   frame = new BrowserWindow({
     title: 'Aniwhere',
     width: 600,
-    height: 400,
+    height: 66,
     resizable: false,
     alwaysOnTop: true,
     skipTaskbar: true,
@@ -37,6 +40,7 @@ function init() {
       frame.show()
     }
   })
+  transferEvents()
 }
 
 function createInvisibleMenu() {
@@ -82,6 +86,13 @@ function createVisibleMenu() {
       }
     },
   ])
+}
+
+function transferEvents() {
+  ipcMain.on('resize/height', (e, height) => {
+    const [width] = frame.getSize()
+    frame && frame.setSize(width, height)
+  })
 }
 
 const second = app.makeSingleInstance((argv, directory) => {

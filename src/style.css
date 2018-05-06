@@ -9,6 +9,7 @@ body {
   margin: 6px;
   font-family: 'Aniwhere UI';
   color: #343d46;
+  overflow-y: hidden;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }

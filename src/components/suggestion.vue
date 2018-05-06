@@ -7,6 +7,7 @@
 
 <script>
 import debounce from 'lodash.debounce'
+import {ipcRenderer} from 'electron'
 import SuggestionItem from './suggestion-item'
 
 export default {
@@ -21,9 +22,17 @@ export default {
   created() {
     this.$flux.on('input/changed', debounce(value => {
       this.search(value)
+      this.resize()
     }, 200))
   },
   methods: {
+    resize() {
+      // TODO: Compare with current size
+      this.$nextTick(() => {
+        // Resize with margin size of body
+        ipcRenderer.send('resize/height', document.body.scrollHeight + 12)
+      })
+    },
     search(value) {
       if (!value) {
         this.suggestions = []
