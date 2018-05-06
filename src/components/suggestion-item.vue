@@ -9,10 +9,6 @@ export default {
   props: {
     data: Object,
   },
-  data() {
-    return {
-    }
-  },
   methods: {
     select() {
       if (this.data.type === 'hyperlink') {

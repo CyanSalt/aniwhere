@@ -9,6 +9,7 @@
 import debounce from 'lodash.debounce'
 import {ipcRenderer, remote} from 'electron'
 import SuggestionItem from './suggestion-item'
+import {state} from '../plugins/flux'
 
 export default {
   components: {
@@ -18,6 +19,9 @@ export default {
     return {
       suggestions: []
     }
+  },
+  computed: {
+    settings: state('global/settings'),
   },
   created() {
     this.$flux.on('input/changed', debounce(value => {
@@ -56,13 +60,14 @@ export default {
       return []
     },
     querySearchEngines(value) {
-      return [
-        {
-          type: 'hyperlink',
-          url: 'https://www.baidu.com/s?word=%W'.replace('%W', encodeURIComponent(value)),
-          text: '在 %N 中搜索: %W'.replace('%N', '百度').replace('%W', value)
-        }
-      ]
+      const engines = this.settings['suggestions.searchEngines'] || []
+      const encoded = encodeURIComponent(value)
+      return engines.map(engine => ({
+        type: 'hyperlink',
+        url: engine.url.replace('%W', encoded),
+        text: this.i18n('Search by %N: %W#!2')
+          .replace('%N', engine.name).replace('%W', value)
+      }))
     },
   },
 }

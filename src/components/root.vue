@@ -20,6 +20,22 @@ export default {
   computed: {
     input: state('input/text')
   },
+  beforeCreate() {
+    // custom stylesheet
+    const stylesheet = this.$storage.rawdataSync('custom.css')
+    if (stylesheet) {
+      const element = document.createElement('style')
+      element.appendChild(document.createTextNode(stylesheet))
+      document.head.appendChild(element)
+    }
+  },
+  created() {
+    // custom script
+    this.$storage.require('custom.js', init => init(this))
+    this.$storage.load('settings.json', (err, data) => {
+      err || this.$flux.set('global/settings', data)
+    })
+  }
 }
 </script>
 
