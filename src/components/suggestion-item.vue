@@ -19,10 +19,11 @@ export default {
     select() {
       this.$flux.emit('suggestions/focus', this.index)
       if (this.data.type === 'hyperlink') {
-        remote.shell.openExternal(this.data.url)
-        remote.getCurrentWindow().hide()
-        // return
+        remote.shell.openExternal(this.data.link)
+      } else {
+        remote.shell.openItem(this.data.link)
       }
+      remote.getCurrentWindow().hide()
     }
   },
 }
@@ -51,6 +52,12 @@ export default {
   vertical-align: top;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.1);
+}
+.suggestion-item.program::before {
+  background: #f99157;
+}
+.suggestion-item.document::before {
+  background: #fac863;
 }
 .suggestion-item.search-engine::before {
   background: #6699cc;

@@ -14,6 +14,7 @@ module.exports = {
     'array-element-newline': 0,
     'arrow-body-style': 0,
     'arrow-parens': [2, 'as-needed'],
+    'callback-return': 0,
     'capitalized-comments': 0,
     'comma-dangle': [2, 'only-multiline'],
     'curly': [2, 'multi-line', 'consistent'],

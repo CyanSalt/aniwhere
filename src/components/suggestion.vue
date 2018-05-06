@@ -24,7 +24,11 @@ export default {
       searchedAt: 0,
       selected: -1,
       cache: {
-        programs: {
+        program: {
+          list: [],
+          cachedAt: 0,
+        },
+        document: {
           list: [],
           cachedAt: 0,
         },
@@ -80,28 +84,55 @@ export default {
         this.querySearchEngines(value),
       )
     },
-    // Search Programs
     queryPrograms(value) {
       const paths = this.settings['suggestions.programPaths'] || []
       const exts = this.settings['suggestions.programExts'] || []
+      return this.queryFiles(value, 'program', paths, exts)
+    },
+    queryDocuments(value) {
+      const paths = this.settings['suggestions.documentPaths'] || []
+      const exts = this.settings['suggestions.documentExts'] || []
+      return this.queryFiles(value, 'document', paths, exts)
+    },
+    querySearchEngines(value) {
+      const engines = this.settings['suggestions.searchEngines'] || []
+      const encoded = encodeURIComponent(value)
+      return engines.map(engine => ({
+        type: 'hyperlink',
+        category: 'search-engine',
+        link: engine.url.replace('%W', encoded),
+        text: this.i18n('Search by %N: %W#!2')
+          .replace('%N', engine.name).replace('%W', value)
+      }))
+    },
+    // eslint-disable-next-line max-params
+    queryFiles(value, category, paths, exts) {
       const duration = this.settings['suggestions.caching'] || 0
-      const cache = this.cache.programs
+      const cache = this.cache[category]
       if (this.searchedAt - cache.cachedAt < duration * 1000) {
         return cache.list
-          .filter(program => this.matchProgram(program, value))
-          .map(this.getProgramEntry)
+          .filter(file => this.matchFile(file, value))
+          .map(file => this.getFileEntry(category, file))
       }
-      cache.cachedAt = this.searchedAt
+      const start = this.searchedAt
+      cache.cachedAt = start
+      const callback = file => {
+        if (start === cache.cachedAt) {
+          cache.list.push(file)
+        }
+        if (start === this.searchedAt && this.matchFile(file, value)) {
+          this.suggestions.unshift(this.getFileEntry(category, file))
+        }
+      }
       for (const path of paths) {
         const realpath = path.replace(/%([^%]+)%/g, (full, name) => {
           return process.env[name]
         })
-        this.searchProgramsIn(value, realpath, exts, this.searchedAt)
+        this.searchFilesIn(realpath, exts, callback)
       }
       return []
     },
-    // eslint-disable-next-line max-params
-    searchProgramsIn(value, path, exts, start) {
+    searchFilesIn(path, exts, callback) {
       readdir(path, (readdirerr, files) => {
         if (readdirerr) return
         for (const file of files) {
@@ -109,7 +140,7 @@ export default {
           lstat(fullpath, (lstaterr, stats) => {
             if (lstaterr) return
             if (stats.isDirectory()) {
-              this.searchProgramsIn(value, fullpath, exts, start)
+              this.searchFilesIn(fullpath, exts, callback)
               return
             }
             const ext = exts.find(extname => {
@@ -118,43 +149,22 @@ export default {
             if (ext) {
               const name = basename(file, ext)
               const program = {name, path: fullpath}
-              if (start === this.cache.programs.cachedAt) {
-                this.cache.programs.list.push(program)
-              }
-              if (start === this.searchedAt &&
-                this.matchProgram(program, value)
-              ) {
-                this.suggestions.unshift(this.getProgramEntry(program))
-              }
+              callback(program)
             }
           })
         }
       })
     },
-    matchProgram(program, value) {
+    matchFile(program, value) {
       return program.name.indexOf(value) !== -1
     },
-    getProgramEntry(program) {
+    getFileEntry(category, file) {
       return {
-        type: 'program',
-        category: 'program',
-        url: '',
-        text: program.name
+        type: 'file',
+        category,
+        link: file.path,
+        text: file.name
       }
-    },
-    queryDocuments(value) {
-      return []
-    },
-    querySearchEngines(value) {
-      const engines = this.settings['suggestions.searchEngines'] || []
-      const encoded = encodeURIComponent(value)
-      return engines.map(engine => ({
-        type: 'hyperlink',
-        category: 'search-engine',
-        url: engine.url.replace('%W', encoded),
-        text: this.i18n('Search by %N: %W#!2')
-          .replace('%N', engine.name).replace('%W', value)
-      }))
     },
   },
 }
