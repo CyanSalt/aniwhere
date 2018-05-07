@@ -113,6 +113,7 @@ export default {
         return cache.list
           .filter(file => this.matchFile(file, value))
           .map(file => this.getFileEntry(category, file))
+          .sort(this.compareSuggestion)
       }
       const start = this.searchedAt
       cache.cachedAt = start
@@ -121,7 +122,14 @@ export default {
           cache.list.push(file)
         }
         if (start === this.searchedAt && this.matchFile(file, value)) {
-          this.suggestions.unshift(this.getFileEntry(category, file))
+          const {length} = this.suggestions
+          let index = this.suggestions
+            .findIndex(item => this.compareSuggestion(file, item) === -1)
+          if (index === -1) index = length
+          this.suggestions.splice(index, 0, this.getFileEntry(category, file))
+          if (length < 6) {
+            this.resize()
+          }
         }
       }
       for (const path of paths) {
@@ -158,7 +166,13 @@ export default {
       })
     },
     matchFile(file, value) {
-      return file.name.indexOf(value) !== -1
+      const delimiters = '.\\+*?[^]$(){}=!<>|:-'
+      const regex = value.split('')
+        .map(char => {
+          return delimiters.indexOf(char) === -1 ? char : `\\${char}`
+        }).join('.*?')
+      return new RegExp(regex).test(file.name)
+      // return file.name.indexOf(value) !== -1
     },
     getFileEntry(category, file) {
       return {
@@ -169,6 +183,9 @@ export default {
           file.basename : file.name
       }
     },
+    compareSuggestion(foo, bar) {
+      return -1
+    }
   },
 }
 </script>
