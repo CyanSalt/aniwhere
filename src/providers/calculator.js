@@ -22,12 +22,12 @@ export default function (value) {
     case '/':
       result = first / second
       break
-    default: break
+    // no default
   }
   return {
     type: 'clipboard',
     category: 'calculator',
-    link: result,
+    link: String(result),
     title: result,
     subtitle: expression,
   }

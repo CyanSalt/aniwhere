@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import {remote} from 'electron'
+import {remote, clipboard} from 'electron'
 
 export default {
   props: {
@@ -26,6 +26,18 @@ export default {
         remote.shell.openExternal(this.data.link)
       } else {
         remote.shell.openItem(this.data.link)
+      }
+      switch (this.data.type) {
+        case 'hyperlink':
+          remote.shell.openExternal(this.data.link)
+          break
+        case 'file':
+          remote.shell.openItem(this.data.link)
+          break
+        case 'clipboard':
+          clipboard.writeText(this.data.link)
+          break
+        // no default
       }
       remote.getCurrentWindow().hide()
     }
