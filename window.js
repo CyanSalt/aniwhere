@@ -1,7 +1,8 @@
+const electron = require('electron')
 const {
   app, BrowserWindow, Menu, Tray,
-  globalShortcut, ipcMain
-} = require('electron')
+  globalShortcut, ipcMain,
+} = electron
 
 let frame = null
 let tray = null
@@ -14,10 +15,13 @@ function init() {
     toggleFrame()
   })
 
+  const {workAreaSize} = electron.screen.getPrimaryDisplay()
   frame = new BrowserWindow({
     title: 'Aniwhere',
     width: 600,
     height: 66,
+    x: Math.round((workAreaSize.width / 2) - 300),
+    y: Math.round(workAreaSize.height * 0.2),
     resizable: false,
     alwaysOnTop: true,
     skipTaskbar: true,

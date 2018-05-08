@@ -72,6 +72,11 @@ export default {
   outline: none;
   background-color: rgba(0, 0, 0, 0.08);
 }
+.suggestion-item .title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .suggestion-item .subtitle {
   margin-left: 12px;
   width: 0;
