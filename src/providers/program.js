@@ -2,7 +2,7 @@
 export default function (value) {
   const paths = this.settings['suggestions.programPaths']
   const exts = this.settings['suggestions.programExts']
-  return this.queryFiles(value, {paths, exts}, file => ({
+  const mapper = file => ({
     type: 'file',
     category: 'program',
     link: file.path,
@@ -11,5 +11,6 @@ export default function (value) {
     args: file.args,
     icon: file.icon,
     highlight: true,
-  }))
+  })
+  return this.queryFiles(value, {paths, exts, mapper})
 }

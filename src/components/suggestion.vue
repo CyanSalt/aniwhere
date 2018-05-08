@@ -16,6 +16,7 @@ import debounce from 'lodash.debounce'
 import fuzzysort from 'fuzzysort'
 import SuggestionItem from './suggestion-item'
 import {state} from '../plugins/flux'
+import pinyin from '../lib/pinyin'
 
 import queryCalculation from '../providers/calculator'
 import queryPrograms from '../providers/program'
@@ -100,7 +101,7 @@ export default {
         this.resize()
       }
     },
-    queryFiles(value, {paths, exts}, mapper) {
+    queryFiles(value, {paths, exts, mapper}) {
       const ttl = this.settings['suggestions.caching']
       const key = exts.join(',')
       let cache = this.cache[key]
@@ -114,7 +115,7 @@ export default {
           if (!matched) return null
           const entry = mapper(file)
           if (!entry) return null
-          if (entry.highlight) {
+          if (entry.highlight && indexes) {
             const pseudo = {target: entry.title, indexes}
             entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
           }
@@ -134,7 +135,7 @@ export default {
         if (!matched) return
         const entry = mapper(file)
         if (!entry) return
-        if (entry.highlight) {
+        if (entry.highlight && indexes) {
           const pseudo = {target: entry.title, indexes}
           entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
         }
@@ -214,12 +215,20 @@ export default {
     },
     matchFile(file, value) {
       const threshold = this.settings['suggestions.fuzzyThreshold']
-      const result = fuzzysort.single(value, file.name)
+      // Chinese pinyin search
+      const regex = /[\u4e00-\u9FA5]/g
+      let haystack = file.name
+      let transformed = false
+      if (!regex.test(value)) {
+        haystack = haystack.replace(regex, char => ` ${pinyin(char)} `).trim()
+        transformed = true
+      }
+      const result = fuzzysort.single(value, haystack)
       if (!result) return {matched: false}
       return {
         matched: result.score > threshold,
         score: result.score,
-        indexes: result.indexes
+        indexes: transformed ? null : result.indexes,
       }
     },
     compareSuggestion(foo, bar) {
