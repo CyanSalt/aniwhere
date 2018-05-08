@@ -51,6 +51,7 @@ module.exports = {
     'one-var': [2, 'never'],
     'operator-linebreak': [2, 'after'],
     'padded-blocks': 0,
+    'prefer-const': [2, { destructuring: 'all' }],
     'prefer-destructuring': 0,
     'quote-props': 0,
     'quotes': [2, 'single'],
@@ -60,5 +61,6 @@ module.exports = {
     'sort-keys': 0,
     'space-before-function-paren': [2, { named: 'never' }],
     'strict': 0,
+    'valid-jsdoc': 0,
   }
 }

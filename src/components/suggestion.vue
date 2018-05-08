@@ -14,12 +14,23 @@ import {readdir, lstat} from 'original-fs'
 import SuggestionItem from './suggestion-item'
 import {state} from '../plugins/flux'
 
+import queryCalculation from '../providers/calculator'
+import queryPrograms from '../providers/program'
+import queryDocuments from '../providers/document'
+import querySearchEngines from '../providers/search-engine'
+
 export default {
   components: {
     'suggestion-item': SuggestionItem,
   },
   data() {
     return {
+      providers: [
+        queryCalculation,
+        queryPrograms,
+        queryDocuments,
+        querySearchEngines,
+      ],
       suggestions: [],
       searchedAt: 0,
       selected: -1,
@@ -78,32 +89,9 @@ export default {
         this.suggestions = []
         return
       }
-      this.suggestions = [].concat(
-        this.queryPrograms(value),
-        this.queryDocuments(value),
-        this.querySearchEngines(value),
-      )
-    },
-    queryPrograms(value) {
-      const paths = this.settings['suggestions.programPaths'] || []
-      const exts = this.settings['suggestions.programExts'] || []
-      return this.queryFiles(value, 'program', paths, exts)
-    },
-    queryDocuments(value) {
-      const paths = this.settings['suggestions.documentPaths'] || []
-      const exts = this.settings['suggestions.documentExts'] || []
-      return this.queryFiles(value, 'document', paths, exts)
-    },
-    querySearchEngines(value) {
-      const engines = this.settings['suggestions.searchEngines'] || []
-      const encoded = encodeURIComponent(value)
-      return engines.map(engine => ({
-        type: 'hyperlink',
-        category: 'search-engine',
-        link: engine.url.replace('%W', encoded),
-        text: this.i18n('Search by %N: %W#!2')
-          .replace('%N', engine.name).replace('%W', value)
-      }))
+      this.suggestions = this.providers
+        .map(provider => provider.call(this, value))
+        .reduce((suggestions, result) => suggestions.concat(result), [])
     },
     // eslint-disable-next-line max-params
     queryFiles(value, category, paths, exts) {
