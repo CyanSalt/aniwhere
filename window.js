@@ -7,7 +7,7 @@ let frame = null
 let tray = null
 
 function init() {
-  tray = new Tray('./src/assets/images/icon.png')
+  tray = new Tray(`${__dirname}/src/assets/images/icon.png`)
   tray.setContextMenu(createVisibleMenu())
   tray.setToolTip('Aniwhere')
   tray.on('double-click', () => {

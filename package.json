@@ -4,6 +4,7 @@
   "description": "Find anything aniwhere.",
   "main": "window.js",
   "scripts": {
+    "build": "webpack --mode=production && node makefile.js",
     "dev": "webpack --mode=development && electron .",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
   },
@@ -16,8 +17,10 @@
   "dependencies": {
     "css-loader": "^0.28.11",
     "electron": "^2.0.0",
+    "electron-packager": "^12.0.2",
     "lodash.debounce": "^4.0.8",
     "mini-css-extract-plugin": "^0.4.0",
+    "png2icons": "^1.0.1",
     "vue": "^2.5.16",
     "vue-loader": "^15.0.9",
     "vue-template-compiler": "^2.5.16",

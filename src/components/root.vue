@@ -10,6 +10,7 @@
 import Typewriter from './typewriter'
 import Suggestion from './suggestion'
 import {state} from '../plugins/flux'
+import settings from '../resources/default/settings.json'
 
 export default {
   el: '#main',
@@ -33,7 +34,8 @@ export default {
     // custom script
     this.$storage.require('custom.js', init => init(this))
     this.$storage.load('settings.json', (err, data) => {
-      err || this.$flux.set('global/settings', data)
+      data = err ? settings : Object.assign(data, settings)
+      this.$flux.set('global/settings', data)
     })
   },
   methods: {

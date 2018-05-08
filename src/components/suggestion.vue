@@ -156,7 +156,7 @@ export default {
         .map(char => {
           return delimiters.indexOf(char) === -1 ? char : `\\${char}`
         }).join('.*?')
-      return new RegExp(regex).test(file.name)
+      return new RegExp(regex, 'i').test(file.name)
       // return file.name.indexOf(value) !== -1
     },
     compareSuggestion(foo, bar) {
