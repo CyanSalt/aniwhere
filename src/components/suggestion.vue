@@ -110,9 +110,15 @@ export default {
       }
       if (this.searchedAt - cache.cachedAt < ttl * 1000) {
         return cache.list.map(file => {
-          const {matched, score} = this.matchFile(file, value)
+          const {matched, score, indexes} = this.matchFile(file, value)
           if (!matched) return null
-          return Object.assign(mapper(file), {score})
+          const entry = mapper(file)
+          if (!entry) return null
+          if (entry.highlight) {
+            const pseudo = {target: entry.title, indexes}
+            entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
+          }
+          return Object.assign(entry, {score})
         }).filter(Boolean)
       }
       const start = this.searchedAt
@@ -124,10 +130,15 @@ export default {
         if (start !== this.searchedAt) {
           return
         }
-        const {matched, score} = this.matchFile(file, value)
-        if (matched) {
-          this.resolve(Object.assign(mapper(file), {score}))
+        const {matched, score, indexes} = this.matchFile(file, value)
+        if (!matched) return
+        const entry = mapper(file)
+        if (!entry) return
+        if (entry.highlight) {
+          const pseudo = {target: entry.title, indexes}
+          entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
         }
+        this.resolve(Object.assign(entry, {score}))
       }
       for (const path of paths) {
         const realpath = path.replace(/%([^%]+)%/g, (full, name) => {
@@ -169,32 +180,34 @@ export default {
               callback(info)
               return
             }
+            let details = null
             try {
-              const details = remote.shell.readShortcutLink(fullpath)
-              info.path = details.target
-              let condition = null
-              if (exts.indexOf('/') !== -1) {
-                condition = Promise.resolve()
-              } else {
-                condition = plstat(details.target).then(lstats => {
-                  if (lstats.isDirectory()) {
-                    throw new Error('is directory')
-                  }
-                  return lstats
-                })
-              }
-              condition.then(() => {
-                info.icon = details.icon
-                info.description = details.description
-                if (details.args) {
-                  info.args = details.args.trim().split(/\s+/)
-                }
-              }).catch(e => {}).finally(() => {
-                callback(info)
-              })
+              details = remote.shell.readShortcutLink(fullpath)
             } catch (e) {
               callback(info)
+              return
             }
+            info.path = details.target
+            let condition = null
+            if (exts.indexOf('/') !== -1) {
+              condition = Promise.resolve()
+            } else {
+              condition = plstat(details.target).then(lstats => {
+                if (lstats.isDirectory()) {
+                  throw new Error('is directory')
+                }
+                return lstats
+              })
+            }
+            condition.then(() => {
+              info.icon = details.icon
+              info.description = details.description
+              if (details.args) {
+                info.args = details.args.trim().split(/\s+/)
+              }
+            }).catch(e => {}).then(() => {
+              callback(info)
+            })
           })
         }
       })
@@ -206,6 +219,7 @@ export default {
       return {
         matched: result.score > threshold,
         score: result.score,
+        indexes: result.indexes
       }
     },
     compareSuggestion(foo, bar) {

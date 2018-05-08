@@ -3,7 +3,7 @@
     @click="select" @keyup.enter="select">
     <span class="tag"></span>
     <img class="icon" :src="icon" v-if="icon"></span>
-    <span class="title">{{ data.title }}</span>
+    <span class="title" v-html="data.title"></span>
     <span class="subtitle" v-if="data.subtitle">{{ data.subtitle }}</span>
   </li>
 </template>

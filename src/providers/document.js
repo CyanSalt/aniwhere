@@ -9,5 +9,6 @@ export default function (value) {
     title: file.name,
     subtitle: file.path,
     icon: file.icon,
+    highlight: true,
   }))
 }

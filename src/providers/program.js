@@ -10,5 +10,6 @@ export default function (value) {
     subtitle: file.description || file.path,
     args: file.args,
     icon: file.icon,
+    highlight: true,
   }))
 }
