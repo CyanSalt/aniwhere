@@ -34,16 +34,7 @@ export default {
       suggestions: [],
       searchedAt: 0,
       selected: -1,
-      cache: {
-        program: {
-          list: [],
-          cachedAt: 0,
-        },
-        document: {
-          list: [],
-          cachedAt: 0,
-        },
-      }
+      cache: {}
     }
   },
   computed: {
@@ -92,16 +83,29 @@ export default {
       this.suggestions = this.providers
         .map(provider => provider.call(this, value))
         .reduce((suggestions, result) => suggestions.concat(result), [])
+        .sort(this.compareSuggestion)
     },
-    // eslint-disable-next-line max-params
-    queryFiles(value, category, paths, exts) {
-      const duration = this.settings['suggestions.caching'] || 0
-      const cache = this.cache[category]
-      if (this.searchedAt - cache.cachedAt < duration * 1000) {
-        return cache.list
-          .filter(file => this.matchFile(file, value))
-          .map(file => this.getFileEntry(category, file))
-          .sort(this.compareSuggestion)
+    resolve(suggestion) {
+      const {length} = this.suggestions
+      let index = this.suggestions
+        .findIndex(item => this.compareSuggestion(suggestion, item) === -1)
+      if (index === -1) index = length
+      this.suggestions.splice(index, 0, suggestion)
+      if (length < 6) {
+        this.resize()
+      }
+    },
+    queryFiles(value, {paths, exts}, mapper) {
+      const ttl = this.settings['suggestions.caching'] || 0
+      const key = exts.join(',')
+      let cache = this.cache[key]
+      if (!cache) {
+        cache = {list: [], cachedAt: 0}
+        this.cache[key] = cache
+      }
+      if (this.searchedAt - cache.cachedAt < ttl * 1000) {
+        return cache.list.filter(file => this.matchFile(file, value))
+          .map(mapper)
       }
       const start = this.searchedAt
       cache.cachedAt = start
@@ -110,14 +114,7 @@ export default {
           cache.list.push(file)
         }
         if (start === this.searchedAt && this.matchFile(file, value)) {
-          const {length} = this.suggestions
-          let index = this.suggestions
-            .findIndex(item => this.compareSuggestion(file, item) === -1)
-          if (index === -1) index = length
-          this.suggestions.splice(index, 0, this.getFileEntry(category, file))
-          if (length < 6) {
-            this.resize()
-          }
+          this.resolve(mapper(file))
         }
       }
       for (const path of paths) {
@@ -162,18 +159,9 @@ export default {
       return new RegExp(regex).test(file.name)
       // return file.name.indexOf(value) !== -1
     },
-    getFileEntry(category, file) {
-      return {
-        type: 'file',
-        category,
-        link: file.path,
-        text: category === 'program' ?
-          file.basename : file.name
-      }
-    },
     compareSuggestion(foo, bar) {
       return -1
-    }
+    },
   },
 }
 </script>
