@@ -147,18 +147,26 @@ export default {
               path: fullpath,
               icon: fullpath,
             }
-            if (ext === '.lnk' && process.platform === 'win32') {
-              try {
-                const details = remote.shell.readShortcutLink(fullpath)
-                info.path = details.target
-                info.icon = details.icon
-                info.description = details.description
-                if (details.args) {
-                  info.args = details.args.trim().split(/\s+/)
-                }
-              } catch (e) {}
+            if (ext !== '.lnk' || process.platform !== 'win32') {
+              callback(info)
+              return
             }
-            callback(info)
+            try {
+              const details = remote.shell.readShortcutLink(fullpath)
+              info.path = details.target
+              lstat(details.target, (staterr, lstats) => {
+                if (!staterr && !lstats.isDirectory()) {
+                  info.icon = details.icon
+                  info.description = details.description
+                  if (details.args) {
+                    info.args = details.args.trim().split(/\s+/)
+                  }
+                }
+                callback(info)
+              })
+            } catch (e) {
+              callback(info)
+            }
           })
         }
       })
