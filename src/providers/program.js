@@ -7,6 +7,8 @@ export default function (value) {
     category: 'program',
     link: file.path,
     title: file.basename,
-    subtitle: file.path,
+    subtitle: file.description || file.path,
+    args: file.args,
+    icon: file.icon,
   }))
 }

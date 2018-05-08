@@ -1,7 +1,8 @@
 <template>
   <ul class="suggestion">
-    <suggestion-item v-for="item, index in suggestions" :key="index"
-      :index="index" :data="item" :active="index === selected"
+    <suggestion-item v-for="item, index in suggestions"
+      :key="`${ item.link }@${ index }`" :index="index" :data="item"
+      :active="index === selected"
       ></suggestion-item>
   </ul>
 </template>
@@ -139,13 +140,25 @@ export default {
             const ext = exts.find(extname => {
               return file.slice(-extname.length) === extname
             })
-            if (ext) {
-              callback({
-                name: file,
-                basename: basename(file, ext),
-                path: fullpath,
-              })
+            if (!ext) return
+            const info = {
+              name: file,
+              basename: basename(file, ext),
+              path: fullpath,
+              icon: fullpath,
             }
+            if (ext === '.lnk' && process.platform === 'win32') {
+              try {
+                const details = remote.shell.readShortcutLink(fullpath)
+                info.path = details.target
+                info.icon = details.icon
+                info.description = details.description
+                if (details.args) {
+                  info.args = details.args.trim().split(/\s+/)
+                }
+              } catch (e) {}
+            }
+            callback(info)
           })
         }
       })

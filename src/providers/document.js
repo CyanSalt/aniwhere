@@ -8,5 +8,6 @@ export default function (value) {
     link: file.path,
     title: file.name,
     subtitle: file.path,
+    icon: file.icon,
   }))
 }

@@ -2,6 +2,7 @@
   <li :class="['suggestion-item', data.category]" :tabindex="index"
     @click="select" @keyup.enter="select">
     <span class="tag"></span>
+    <img class="icon" :src="icon" v-if="icon"></span>
     <span class="title">{{ data.title }}</span>
     <span class="subtitle" v-if="data.subtitle">{{ data.subtitle }}</span>
   </li>
@@ -9,6 +10,7 @@
 
 <script>
 import {remote, clipboard} from 'electron'
+import {spawn} from 'child_process'
 
 export default {
   props: {
@@ -19,20 +21,31 @@ export default {
       default: false,
     }
   },
+  data() {
+    return {
+      icon: null,
+    }
+  },
+  created() {
+    if (this.data.icon) {
+      remote.app.getFileIcon(this.data.icon, (err, icon) => {
+        err || (this.icon = icon.toDataURL())
+      })
+    }
+  },
   methods: {
     select() {
       this.$flux.emit('suggestions/focus', this.index)
-      if (this.data.type === 'hyperlink') {
-        remote.shell.openExternal(this.data.link)
-      } else {
-        remote.shell.openItem(this.data.link)
-      }
       switch (this.data.type) {
         case 'hyperlink':
           remote.shell.openExternal(this.data.link)
           break
         case 'file':
-          remote.shell.openItem(this.data.link)
+          if (this.data.args) {
+            spawn(this.data.link, this.data.args)
+          } else {
+            remote.shell.openItem(this.data.link)
+          }
           break
         case 'clipboard':
           clipboard.writeText(this.data.link)
@@ -81,6 +94,10 @@ export default {
   vertical-align: top;
   border-radius: 50%;
   background: currentColor;
+}
+.suggestion-item .icon {
+  height: 20px;
+  margin: 2px 4px 2px 0;
 }
 .suggestion-item.program .tag {
   color: #f99157;
