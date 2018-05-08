@@ -12,5 +12,7 @@
   "suggestions.programExts": [".exe", ".lnk"],
   "suggestions.documentPaths": [],
   "suggestions.documentExts": [".pdf", ".md", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"],
-  "suggestions.caching": 60
+  "suggestions.caching": 60,
+  "suggestions.fuzzyThreshold": -8000,
+  "suggestions.categoryOrder": ["calculator", "program", "document", "search-engine"]
 }

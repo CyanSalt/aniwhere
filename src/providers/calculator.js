@@ -30,5 +30,6 @@ export default function (value) {
     link: String(result),
     title: result,
     subtitle: expression,
+    score: 1,
   }
 }

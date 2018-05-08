@@ -8,10 +8,11 @@
 </template>
 
 <script>
-import debounce from 'lodash.debounce'
 import {ipcRenderer, remote} from 'electron'
 import {join, basename} from 'path'
 import {readdir, lstat} from 'original-fs'
+import debounce from 'lodash.debounce'
+import fuzzysort from 'fuzzysort'
 import SuggestionItem from './suggestion-item'
 import {state} from '../plugins/flux'
 
@@ -97,7 +98,7 @@ export default {
       }
     },
     queryFiles(value, {paths, exts}, mapper) {
-      const ttl = this.settings['suggestions.caching'] || 0
+      const ttl = this.settings['suggestions.caching']
       const key = exts.join(',')
       let cache = this.cache[key]
       if (!cache) {
@@ -105,8 +106,11 @@ export default {
         this.cache[key] = cache
       }
       if (this.searchedAt - cache.cachedAt < ttl * 1000) {
-        return cache.list.filter(file => this.matchFile(file, value))
-          .map(mapper)
+        return cache.list.map(file => {
+          const {matched, score} = this.matchFile(file, value)
+          if (!matched) return null
+          return Object.assign(mapper(file), {score})
+        }).filter(Boolean)
       }
       const start = this.searchedAt
       cache.cachedAt = start
@@ -114,8 +118,12 @@ export default {
         if (start === cache.cachedAt) {
           cache.list.push(file)
         }
-        if (start === this.searchedAt && this.matchFile(file, value)) {
-          this.resolve(mapper(file))
+        if (start !== this.searchedAt) {
+          return
+        }
+        const {matched, score} = this.matchFile(file, value)
+        if (matched) {
+          this.resolve(Object.assign(mapper(file), {score}))
         }
       }
       for (const path of paths) {
@@ -172,16 +180,25 @@ export default {
       })
     },
     matchFile(file, value) {
-      const delimiters = '.\\+*?[^]$(){}=!<>|:-'
-      const regex = value.split('')
-        .map(char => {
-          return delimiters.indexOf(char) === -1 ? char : `\\${char}`
-        }).join('.*?')
-      return new RegExp(regex, 'i').test(file.name)
-      // return file.name.indexOf(value) !== -1
+      const threshold = this.settings['suggestions.fuzzyThreshold']
+      const result = fuzzysort.single(value, file.name)
+      if (!result) return {matched: false}
+      return {
+        matched: result.score > threshold,
+        score: result.score,
+      }
     },
     compareSuggestion(foo, bar) {
-      return -1
+      const categoryOrder = this.settings['suggestions.categoryOrder']
+      let diff = 0
+      if (foo.category !== bar.category) {
+        diff = categoryOrder.indexOf(foo.category) -
+          categoryOrder.indexOf(bar.category)
+      } else {
+        diff = bar.score - foo.score
+      }
+      if (!diff) return 0
+      return diff > 0 ? 1 : -1
     },
   },
 }
