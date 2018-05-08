@@ -10,6 +10,7 @@
 <script>
 import {ipcRenderer, remote} from 'electron'
 import {join, basename} from 'path'
+import {promisify} from 'util'
 import {readdir, lstat} from 'original-fs'
 import debounce from 'lodash.debounce'
 import fuzzysort from 'fuzzysort'
@@ -20,6 +21,8 @@ import queryCalculation from '../providers/calculator'
 import queryPrograms from '../providers/program'
 import queryDocuments from '../providers/document'
 import querySearchEngines from '../providers/search-engine'
+
+const plstat = promisify(lstat)
 
 export default {
   components: {
@@ -143,6 +146,13 @@ export default {
             if (lstaterr) return
             if (stats.isDirectory()) {
               this.searchFilesIn(fullpath, exts, callback)
+              if (exts.indexOf('/') !== -1) {
+                callback({
+                  name: file,
+                  basename: file,
+                  path: fullpath,
+                })
+              }
               return
             }
             const ext = exts.find(extname => {
@@ -162,14 +172,24 @@ export default {
             try {
               const details = remote.shell.readShortcutLink(fullpath)
               info.path = details.target
-              lstat(details.target, (staterr, lstats) => {
-                if (!staterr && !lstats.isDirectory()) {
-                  info.icon = details.icon
-                  info.description = details.description
-                  if (details.args) {
-                    info.args = details.args.trim().split(/\s+/)
+              let condition = null
+              if (exts.indexOf('/') !== -1) {
+                condition = Promise.resolve()
+              } else {
+                condition = plstat(details.target).then(lstats => {
+                  if (lstats.isDirectory()) {
+                    throw new Error('is directory')
                   }
+                  return lstats
+                })
+              }
+              condition.then(() => {
+                info.icon = details.icon
+                info.description = details.description
+                if (details.args) {
+                  info.args = details.args.trim().split(/\s+/)
                 }
+              }).catch(e => {}).finally(() => {
                 callback(info)
               })
             } catch (e) {
