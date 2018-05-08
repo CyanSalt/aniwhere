@@ -34,14 +34,16 @@ export default {
     }
   },
   methods: {
-    select() {
+    select(e) {
       this.$flux.emit('suggestions/focus', this.index)
       switch (this.data.type) {
         case 'hyperlink':
           remote.shell.openExternal(this.data.link)
           break
         case 'file':
-          if (this.data.args) {
+          if (e.ctrlKey) {
+            remote.shell.showItemInFolder(this.data.link)
+          } else if (this.data.args) {
             spawn(this.data.link, this.data.args)
           } else {
             remote.shell.openItem(this.data.link)

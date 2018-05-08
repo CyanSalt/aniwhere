@@ -38,7 +38,7 @@ function init() {
   frame.setMenu(createInvisibleMenu())
   frame.setMenuBarVisibility(false)
 
-  globalShortcut.register('Alt+Shift+P', () => {
+  globalShortcut.register('Alt+Shift+F', () => {
     if (!frame) {
       return
     }
