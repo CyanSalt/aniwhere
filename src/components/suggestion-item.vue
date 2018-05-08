@@ -1,6 +1,10 @@
 <template>
   <li :class="['suggestion-item', data.category]" :tabindex="index"
-    @click="select" @keyup.enter="select">{{ data.text }}</li>
+    @click="select" @keyup.enter="select">
+    <span class="tag"></span>
+    <span class="title">{{ data.title }}</span>
+    <span class="subtitle" v-if="data.subtitle">{{ data.subtitle }}</span>
+  </li>
 </template>
 
 <script>
@@ -31,6 +35,7 @@ export default {
 
 <style>
 .suggestion-item {
+  display: flex;
   margin: 8px 12px;
   padding: 6px 12px;
   border-radius: 4px;
@@ -42,7 +47,19 @@ export default {
   outline: none;
   background-color: rgba(0, 0, 0, 0.08);
 }
-.suggestion-item::before {
+.suggestion-item .subtitle {
+  margin-left: 12px;
+  width: 0;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.5;
+}
+.suggestion-item .tag {
+  color: rgba(0, 0, 0, 0.1);
+}
+.suggestion-item .tag::before {
   content: '';
   display: inline-block;
   width: 6px;
@@ -51,15 +68,15 @@ export default {
   margin-top: 9px;
   vertical-align: top;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.1);
+  background: currentColor;
 }
-.suggestion-item.program::before {
-  background: #f99157;
+.suggestion-item.program .tag {
+  color: #f99157;
 }
-.suggestion-item.document::before {
-  background: #fac863;
+.suggestion-item.document .tag {
+  color: #fac863;
 }
-.suggestion-item.search-engine::before {
-  background: #6699cc;
+.suggestion-item.search-engine .tag {
+  color: #6699cc;
 }
 </style>

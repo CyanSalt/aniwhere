@@ -6,6 +6,7 @@ export default function (value) {
     type: 'file',
     category: 'program',
     link: file.path,
-    text: file.basename,
+    title: file.basename,
+    subtitle: file.path,
   }))
 }

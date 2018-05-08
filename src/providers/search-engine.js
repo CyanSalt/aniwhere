@@ -6,7 +6,7 @@ export default function (value) {
     type: 'hyperlink',
     category: 'search-engine',
     link: engine.url.replace('%W', encoded),
-    text: this.i18n('Search by %N: %W#!2')
+    title: this.i18n('Search by %N: %W#!2')
       .replace('%N', engine.name).replace('%W', value)
   }))
 }

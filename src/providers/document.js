@@ -6,6 +6,7 @@ export default function (value) {
     type: 'file',
     category: 'document',
     link: file.path,
-    text: file.name,
+    title: file.name,
+    subtitle: file.path,
   }))
 }

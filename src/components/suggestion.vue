@@ -34,7 +34,7 @@ export default {
       suggestions: [],
       searchedAt: 0,
       selected: -1,
-      cache: {}
+      cache: {},
     }
   },
   computed: {

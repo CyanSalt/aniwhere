@@ -27,7 +27,8 @@ export default function (value) {
   return {
     type: 'clipboard',
     category: 'calculator',
-    link: expression,
-    text: result,
+    link: result,
+    title: result,
+    subtitle: expression,
   }
 }
