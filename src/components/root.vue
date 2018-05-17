@@ -62,7 +62,7 @@ export default {
 <style>
 #main {
   background: rgba(255, 255, 255, 0.9);
-  box-shadow: 1px 1px 6px 1px rgba(0, 0, 0, 0.1)
+  box-shadow: 1px 1px 6px 0 rgba(0, 0, 0, 0.2)
 }
 .divider {
   margin: 0 16px;

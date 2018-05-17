@@ -54,18 +54,23 @@ export default {
     }, 200))
     this.$flux.on('suggestions/toggle', step => {
       const target = this.selected + step
-      if (target < 0) {
-        // Note: `input/focus` will trigger `focus`
-        this.$flux.emit('input/focus')
-        return
-      }
       if (target < this.suggestions.length) {
-        this.selected = target
-        this.$children[target].$el.focus()
+        if (target >= -1) {
+          this.selected = target
+        }
+        if (target < 0) {
+          // Note: `input/focus` will trigger `focus`
+          this.$flux.emit('input/focus')
+        } else {
+          this.$children[target].$el.focus()
+        }
       }
     })
     this.$flux.on('suggestions/focus', target => {
       this.selected = target
+    })
+    this.$flux.on('suggestions/register', provider => {
+      this.providers.unshift(provider)
     })
   },
   methods: {
