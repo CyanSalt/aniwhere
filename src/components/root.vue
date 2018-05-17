@@ -65,7 +65,22 @@ export default {
   box-shadow: 1px 1px 6px 0 rgba(0, 0, 0, 0.2)
 }
 .divider {
+  display: flex;
   margin: 0 16px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  height: 1px;
+  justify-content: space-between;
+  background: #fac863;
+}
+.divider::before, .divider::after {
+  content: '';
+  display: block;
+  width: 33.333%;
+  height: 1px;
+}
+.divider::before {
+  background: #f99157;
+}
+.divider::after {
+  background: #6699cc;
 }
 </style>
