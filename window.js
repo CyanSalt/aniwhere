@@ -29,6 +29,7 @@ function init() {
     transparent: true,
     webPreferences: {
       experimentalFeatures: true,
+      nodeIntegrationInWorker: true,
     },
   })
   frame.loadURL(`file://${__dirname}/src/index.html`)

@@ -9,9 +9,6 @@
 
 <script>
 import {ipcRenderer, remote} from 'electron'
-import {join, basename} from 'path'
-import {promisify} from 'util'
-import {readdir, lstat} from 'original-fs'
 import debounce from 'lodash.debounce'
 import fuzzysort from 'fuzzysort'
 import SuggestionItem from './suggestion-item'
@@ -22,8 +19,6 @@ import queryCalculation from '../providers/calculator'
 import queryPrograms from '../providers/program'
 import queryDocuments from '../providers/document'
 import querySearchEngines from '../providers/search-engine'
-
-const plstat = promisify(lstat)
 
 export default {
   components: {
@@ -41,6 +36,7 @@ export default {
       searchedAt: 0,
       selected: -1,
       cache: {},
+      searcher: null,
     }
   },
   computed: {
@@ -106,11 +102,11 @@ export default {
     },
     queryFiles(value, {paths, exts, mapper}) {
       const ttl = this.settings['suggestions.caching']
-      const key = exts.join(',')
-      let cache = this.cache[key]
+      const cacheKey = exts.join(',')
+      let cache = this.cache[cacheKey]
       if (!cache) {
         cache = {list: [], cachedAt: 0}
-        this.cache[key] = cache
+        this.cache[cacheKey] = cache
       }
       if (this.searchedAt - cache.cachedAt < ttl * 1000) {
         return cache.list
@@ -120,20 +116,14 @@ export default {
       const start = this.searchedAt
       cache.cachedAt = start
       const callback = file => {
-        if (start === cache.cachedAt) {
-          cache.list.push(file)
-        }
-        if (start !== this.searchedAt) {
-          return
-        }
         const entry = this.getFileEntry(file, value, mapper)
         entry && this.resolve(entry)
       }
-      for (const path of paths) {
-        const realpath = path.replace(/%([^%]+)%/g, (full, name) => {
+      for (const originalPath of paths) {
+        const path = originalPath.replace(/%([^%]+)%/g, (full, name) => {
           return process.env[name] || full
         })
-        this.searchFilesIn(realpath, exts, callback)
+        this.searchFilesIn({path, exts}, {start, cacheKey}, callback)
       }
       return []
     },
@@ -148,69 +138,31 @@ export default {
       }
       return Object.assign(entry, {score})
     },
-    searchFilesIn(path, exts, callback) {
-      readdir(path, (readdirerr, files) => {
-        if (readdirerr) return
-        for (const file of files) {
-          const fullpath = join(path, file)
-          lstat(fullpath, (lstaterr, stats) => {
-            if (lstaterr) return
-            if (stats.isDirectory()) {
-              this.searchFilesIn(fullpath, exts, callback)
-              if (exts.indexOf('/') !== -1) {
-                callback({
-                  name: file,
-                  basename: file,
-                  path: fullpath,
-                })
-              }
-              return
-            }
-            const ext = exts.find(extname => {
-              return file.slice(-extname.length) === extname
-            })
-            if (!ext) return
-            const info = {
-              name: file,
-              basename: basename(file, ext),
-              path: fullpath,
-              icon: fullpath,
-            }
-            if (ext !== '.lnk' || process.platform !== 'win32') {
-              callback(info)
-              return
-            }
-            let details = null
-            try {
-              details = remote.shell.readShortcutLink(fullpath)
-            } catch (e) {
-              callback(info)
-              return
-            }
-            info.path = details.target
-            let condition = null
-            if (exts.indexOf('/') !== -1) {
-              condition = Promise.resolve()
-            } else {
-              condition = plstat(details.target).then(lstats => {
-                if (lstats.isDirectory()) {
-                  throw new Error('is directory')
-                }
-                return lstats
-              })
-            }
-            condition.then(() => {
-              info.icon = details.icon
-              info.description = details.description
-              if (details.args) {
-                info.args = details.args.trim().split(/\s+/)
-              }
-            }).catch(e => {}).then(() => {
-              callback(info)
-            })
-          })
+    searchFilesIn(args, newContext, callback) {
+      if (!this.searcher) {
+        this.searcher = new Worker('workers/searcher.js')
+      }
+      const searcher = this.searcher
+      searcher.onmessage = ({data}) => {
+        const {info, context} = data
+        if (info.shortcut) {
+          try {
+            const details = remote.shell.readShortcutLink(info.path)
+            searcher.postMessage(['shortcut', context, {info, details}])
+            return
+          } catch (error) {}
         }
-      })
+        const {start, cacheKey} = context
+        const cache = this.cache[cacheKey]
+        if (cache && start === cache.cachedAt) {
+          cache.list.push(info)
+        }
+        if (start !== this.searchedAt) {
+          return
+        }
+        callback(info)
+      }
+      searcher.postMessage(['search', newContext, args])
     },
     matchFile(file, value) {
       const threshold = this.settings['suggestions.fuzzyThreshold']
