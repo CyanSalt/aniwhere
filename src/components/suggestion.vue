@@ -36,7 +36,9 @@ export default {
       searchedAt: 0,
       selected: -1,
       cache: {},
-      searcher: null,
+      workers: {
+        'file-searcher': null,
+      },
       recentItemCount: 0,
     }
   },
@@ -142,10 +144,10 @@ export default {
       return Object.assign(entry, {score})
     },
     searchFilesIn(args, newContext, callback) {
-      if (!this.searcher) {
-        this.searcher = new Worker('workers/searcher.js')
+      if (!this.workers['file-searcher']) {
+        this.workers['file-searcher'] = new Worker('workers/file-searcher.js')
       }
-      const searcher = this.searcher
+      const searcher = this.workers['file-searcher']
       searcher.onmessage = ({data}) => {
         const {info, context} = data
         if (info.shortcut) {
