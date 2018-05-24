@@ -76,13 +76,8 @@ export default {
   methods: {
     resize() {
       this.$nextTick(() => {
-        const frame = remote.getCurrentWindow()
         const height = document.body.scrollHeight + 12
-        const [width, originalHeight] = frame.getSize()
-        if (height !== originalHeight) {
-          // Resize with margin size of body
-          ipcRenderer.send('resize', width, height)
-        }
+        ipcRenderer.send('resize/height', height)
       })
     },
     search(value) {

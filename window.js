@@ -90,8 +90,11 @@ function createVisibleMenu() {
 }
 
 function transferEvents() {
-  ipcMain.on('resize', (e, width, height) => {
-    frame && frame.setSize(width, height)
+  ipcMain.on('resize/height', (e, height) => {
+    const [width, originalHeight] = frame.getSize()
+    if (height !== originalHeight) {
+      frame && frame.setSize(width, height)
+    }
   })
 }
 
