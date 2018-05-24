@@ -37,6 +37,7 @@ export default {
       selected: -1,
       cache: {},
       searcher: null,
+      recentItemCount: 0,
     }
   },
   computed: {
@@ -74,6 +75,8 @@ export default {
       this.$nextTick(() => {
         // const height = document.body.scrollHeight + 12
         const length = Math.min(this.suggestions.length, 6)
+        if (length === this.recentItemCount) return
+        this.recentItemCount = length
         const height = 12 + 54 + 1 +
           (36 * length) + (8 * (length ? length + 1 : 0))
         ipcRenderer.send('resize/height', height)
