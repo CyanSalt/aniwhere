@@ -73,7 +73,7 @@ function resolveShortcut(args, context, callback) {
 }
 
 onmessage = ({data}) => {
-  const [action, context, args] = data
+  const [action, args, context] = data
   switch (action) {
     case 'search': {
       searchFilesIn(args, context, postMessage)

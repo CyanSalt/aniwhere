@@ -128,36 +128,26 @@ export default {
           entry && this.resolve(entry)
         })
       }
-      for (const originalPath of paths) {
-        const path = originalPath.replace(/%([^%]+)%/g, (full, name) => {
-          return process.env[name] || full
-        })
-        this.searchFilesIn({path, exts}, {start, cacheKey}, callback)
-      }
-      return []
-    },
-    getFileEntry(file, value, mapper) {
-      const {matched, score, indexes} = this.matchFile(file, value)
-      if (!matched) return null
-      const entry = mapper(file)
-      if (!entry) return null
-      if (entry.highlight && indexes) {
-        const pseudo = {target: entry.title, indexes}
-        entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
-      }
-      return Object.assign(entry, {score})
-    },
-    searchFilesIn(args, newContext, callback) {
       if (!this.workers['file-searcher']) {
         this.workers['file-searcher'] = new Worker('workers/file-searcher.js')
       }
       const searcher = this.workers['file-searcher']
+      this.handleFileSearcher(searcher, callback)
+      for (const originalPath of paths) {
+        const path = originalPath.replace(/%([^%]+)%/g, (full, name) => {
+          return process.env[name] || full
+        })
+        searcher.postMessage(['search', {path, exts}, {start, cacheKey}])
+      }
+      return []
+    },
+    handleFileSearcher(searcher, callback) {
       searcher.onmessage = ({data}) => {
         const {info, context} = data
         if (info.shortcut) {
           try {
             const details = remote.shell.readShortcutLink(info.path)
-            searcher.postMessage(['shortcut', context, {info, details}])
+            searcher.postMessage(['shortcut', {info, details}, context])
             return
           } catch (error) {}
         }
@@ -171,7 +161,17 @@ export default {
         }
         callback(info)
       }
-      searcher.postMessage(['search', newContext, args])
+    },
+    getFileEntry(file, value, mapper) {
+      const {matched, score, indexes} = this.matchFile(file, value)
+      if (!matched) return null
+      const entry = mapper(file)
+      if (!entry) return null
+      if (entry.highlight && indexes) {
+        const pseudo = {target: entry.title, indexes}
+        entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
+      }
+      return Object.assign(entry, {score})
     },
     matchFile(file, value) {
       const threshold = this.settings['suggestions.fuzzyThreshold']
