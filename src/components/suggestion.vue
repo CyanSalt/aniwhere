@@ -113,17 +113,9 @@ export default {
         this.cache[key] = cache
       }
       if (this.searchedAt - cache.cachedAt < ttl * 1000) {
-        return cache.list.map(file => {
-          const {matched, score, indexes} = this.matchFile(file, value)
-          if (!matched) return null
-          const entry = mapper(file)
-          if (!entry) return null
-          if (entry.highlight && indexes) {
-            const pseudo = {target: entry.title, indexes}
-            entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
-          }
-          return Object.assign(entry, {score})
-        }).filter(Boolean)
+        return cache.list
+          .map(file => this.getFileEntry(file, value, mapper))
+          .filter(Boolean)
       }
       const start = this.searchedAt
       cache.cachedAt = start
@@ -134,23 +126,27 @@ export default {
         if (start !== this.searchedAt) {
           return
         }
-        const {matched, score, indexes} = this.matchFile(file, value)
-        if (!matched) return
-        const entry = mapper(file)
-        if (!entry) return
-        if (entry.highlight && indexes) {
-          const pseudo = {target: entry.title, indexes}
-          entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
-        }
-        this.resolve(Object.assign(entry, {score}))
+        const entry = this.getFileEntry(file, value, mapper)
+        entry && this.resolve(entry)
       }
       for (const path of paths) {
         const realpath = path.replace(/%([^%]+)%/g, (full, name) => {
-          return process.env[name]
+          return process.env[name] || full
         })
         this.searchFilesIn(realpath, exts, callback)
       }
       return []
+    },
+    getFileEntry(file, value, mapper) {
+      const {matched, score, indexes} = this.matchFile(file, value)
+      if (!matched) return null
+      const entry = mapper(file)
+      if (!entry) return null
+      if (entry.highlight && indexes) {
+        const pseudo = {target: entry.title, indexes}
+        entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
+      }
+      return Object.assign(entry, {score})
     },
     searchFilesIn(path, exts, callback) {
       readdir(path, (readdirerr, files) => {

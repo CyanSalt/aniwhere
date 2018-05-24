@@ -1,6 +1,6 @@
 {
   "name": "aniwhere",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Find anything aniwhere.",
   "main": "window.js",
   "scripts": {
