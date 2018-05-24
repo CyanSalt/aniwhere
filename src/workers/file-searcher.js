@@ -3,12 +3,31 @@ const {promisify} = require('util')
 const {join, basename} = require('path')
 const plstat = promisify(lstat)
 
+const history = {
+  resolved: {},
+  cachedAt: null,
+  prepare({start}) {
+    if (this.cachedAt !== start) {
+      this.resolved = {}
+    }
+    this.cachedAt = start
+  },
+  hit(path) {
+    if (this.resolved[path]) {
+      return true
+    }
+    this.resolved[path] = true
+    return false
+  }
+}
+
 function searchFilesIn(args, context, callback) {
   const {path, exts} = args
   readdir(path, (readdirerr, files) => {
     if (readdirerr) return
     for (const file of files) {
       const fullpath = join(path, file)
+      if (history.hit(fullpath)) return
       lstat(fullpath, (lstaterr, stats) => {
         if (lstaterr) return
         if (stats.isDirectory()) {
@@ -50,6 +69,7 @@ function resolveShortcut(args, context, callback) {
   const {shortcut} = info
   info.shortcut = false
   info.path = details.target
+  if (history.hit(info.path)) return
   let condition = null
   if (shortcut === 2) {
     condition = Promise.resolve()
@@ -74,6 +94,7 @@ function resolveShortcut(args, context, callback) {
 
 onmessage = ({data}) => {
   const [action, args, context] = data
+  history.prepare(context)
   switch (action) {
     case 'search': {
       searchFilesIn(args, context, postMessage)
