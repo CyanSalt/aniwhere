@@ -111,21 +111,25 @@ export default {
         cache = {list: [], cachedAt: 0}
         this.cache[cacheKey] = cache
       }
-      if (this.searchedAt - cache.cachedAt < ttl * 1000) {
+      const start = this.searchedAt
+      if (start - cache.cachedAt < ttl * 1000) {
         for (const file of cache.list) {
           requestIdleCallback(() => {
             const entry = this.getFileEntry(file, value, mapper)
-            entry && this.resolve(entry)
+            if (entry && start === this.searchedAt) {
+              this.resolve(entry)
+            }
           })
         }
         return []
       }
-      const start = this.searchedAt
       cache.cachedAt = start
       const callback = file => {
         requestIdleCallback(() => {
           const entry = this.getFileEntry(file, value, mapper)
-          entry && this.resolve(entry)
+          if (entry && start === this.searchedAt) {
+            this.resolve(entry)
+          }
         })
       }
       if (!this.workers['file-searcher']) {
