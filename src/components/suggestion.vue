@@ -76,7 +76,10 @@ export default {
   methods: {
     resize() {
       this.$nextTick(() => {
-        const height = document.body.scrollHeight + 12
+        // const height = document.body.scrollHeight + 12
+        const length = Math.min(this.suggestions.length, 6)
+        const height = 12 + 54 + 1 +
+          (36 * length) + (8 * (length ? length + 1 : 0))
         ipcRenderer.send('resize/height', height)
       })
     },
