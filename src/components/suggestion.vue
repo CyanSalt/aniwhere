@@ -101,9 +101,7 @@ export default {
         .findIndex(item => this.compareSuggestion(suggestion, item) === -1)
       if (index === -1) index = length
       this.suggestions.splice(index, 0, suggestion)
-      if (length < 6) {
-        this.resize()
-      }
+      this.resize()
     },
     queryFiles(value, {paths, exts, mapper}) {
       const ttl = this.settings['suggestions.caching']
@@ -114,15 +112,21 @@ export default {
         this.cache[cacheKey] = cache
       }
       if (this.searchedAt - cache.cachedAt < ttl * 1000) {
-        return cache.list
-          .map(file => this.getFileEntry(file, value, mapper))
-          .filter(Boolean)
+        requestIdleCallback(() => {
+          for (const file of cache.list) {
+            const entry = this.getFileEntry(file, value, mapper)
+            entry && this.resolve(entry)
+          }
+        })
+        return []
       }
       const start = this.searchedAt
       cache.cachedAt = start
       const callback = file => {
-        const entry = this.getFileEntry(file, value, mapper)
-        entry && this.resolve(entry)
+        requestIdleCallback(() => {
+          const entry = this.getFileEntry(file, value, mapper)
+          entry && this.resolve(entry)
+        })
       }
       for (const originalPath of paths) {
         const path = originalPath.replace(/%([^%]+)%/g, (full, name) => {
