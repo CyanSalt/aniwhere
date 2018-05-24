@@ -221,11 +221,11 @@ export default {
     matchFile(file, value) {
       const threshold = this.settings['suggestions.fuzzyThreshold']
       // Chinese pinyin search
-      const regex = /[\u4e00-\u9FA5]/g
+      const chinese = /[\u4e00-\u9FA5]/g
       let haystack = file.name
       let transformed = false
-      if (!regex.test(value)) {
-        haystack = haystack.replace(regex, char => ` ${pinyin(char)} `).trim()
+      if (!chinese.test(value)) {
+        haystack = haystack.replace(chinese, char => ` ${pinyin(char)} `).trim()
         transformed = true
       }
       const result = fuzzysort.single(value, haystack)
