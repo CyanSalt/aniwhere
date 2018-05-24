@@ -112,12 +112,12 @@ export default {
         this.cache[cacheKey] = cache
       }
       if (this.searchedAt - cache.cachedAt < ttl * 1000) {
-        requestIdleCallback(() => {
-          for (const file of cache.list) {
+        for (const file of cache.list) {
+          requestIdleCallback(() => {
             const entry = this.getFileEntry(file, value, mapper)
             entry && this.resolve(entry)
-          }
-        })
+          })
+        }
         return []
       }
       const start = this.searchedAt
@@ -179,7 +179,7 @@ export default {
       const chinese = /[\u4e00-\u9FA5]/g
       let haystack = file.name
       let transformed = false
-      if (!chinese.test(value)) {
+      if (!chinese.test(value) && chinese.test(haystack)) {
         haystack = haystack.replace(chinese, char => ` ${pinyin(char)} `).trim()
         transformed = true
       }
