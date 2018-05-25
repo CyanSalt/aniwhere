@@ -122,4 +122,7 @@ export default {
 .suggestion-item.search-engine .tag {
   color: #6699cc;
 }
+.suggestion-item.calculator .tag {
+  color: #99c794;
+}
 </style>
