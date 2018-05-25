@@ -128,4 +128,4 @@ function pinyin(target) {
   return cache[target]
 }
 
-export default pinyin
+module.exports = pinyin

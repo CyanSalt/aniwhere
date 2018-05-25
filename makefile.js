@@ -28,7 +28,7 @@ const options = {
   icon: ICON_PATH,
   ignore: [
     '^/(?!src|package\\.json|window\\.js)',
-    '^/src/(components|lib|plugins|providers|resources|storage)($|/)',
+    '^/src/(components|plugins|providers|resources|storage)($|/)',
     '^/src/assets/.*\\.(ico|icns)$',
   ],
   appVersion: app.executableVersion,

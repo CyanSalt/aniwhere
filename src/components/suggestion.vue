@@ -10,10 +10,8 @@
 <script>
 import {ipcRenderer, remote} from 'electron'
 import debounce from 'lodash.debounce'
-import fuzzysort from 'fuzzysort'
 import SuggestionItem from './suggestion-item'
 import {state} from '../plugins/flux'
-import pinyin from '../lib/pinyin'
 
 import queryCalculation from '../providers/calculator'
 import queryPrograms from '../providers/program'
@@ -38,6 +36,7 @@ export default {
       cache: {},
       workers: {
         'file-searcher': null,
+        'fuzzy-rater': null,
       },
       recentItemCount: 0,
     }
@@ -114,29 +113,16 @@ export default {
       const start = this.searchedAt
       if (start - cache.cachedAt < ttl * 1000) {
         for (const file of cache.list) {
-          requestIdleCallback(() => {
-            const entry = this.getFileEntry(file, value, mapper)
-            if (entry && start === this.searchedAt) {
-              this.resolve(entry)
-            }
-          })
+          this.resolveFile({file, value, mapper}, {start})
         }
         return []
       }
       cache.cachedAt = start
-      const callback = file => {
-        requestIdleCallback(() => {
-          const entry = this.getFileEntry(file, value, mapper)
-          if (entry && start === this.searchedAt) {
-            this.resolve(entry)
-          }
-        })
-      }
       if (!this.workers['file-searcher']) {
         this.workers['file-searcher'] = new Worker('workers/file-searcher.js')
       }
       const searcher = this.workers['file-searcher']
-      this.handleFileSearcher(searcher, callback)
+      this.handleFileSearcher(searcher, {value, mapper})
       for (const originalPath of paths) {
         const path = originalPath.replace(/%([^%]+)%/g, (full, name) => {
           return process.env[name] || full
@@ -145,7 +131,7 @@ export default {
       }
       return []
     },
-    handleFileSearcher(searcher, callback) {
+    handleFileSearcher(searcher, args) {
       searcher.onmessage = ({data}) => {
         const {info, context} = data
         if (info.shortcut) {
@@ -163,36 +149,28 @@ export default {
         if (start !== this.searchedAt) {
           return
         }
-        callback(info)
+        args.file = info
+        this.resolveFile(args, {start})
       }
     },
-    getFileEntry(file, value, mapper) {
-      const {matched, score, indexes} = this.matchFile(file, value)
-      if (!matched) return null
+    resolveFile({file, value, mapper}, newContext) {
       const entry = mapper(file)
-      if (!entry) return null
-      if (entry.highlight && indexes) {
-        const pseudo = {target: entry.title, indexes}
-        entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
+      if (!entry) return
+      entry.originalName = file.name
+      if (!this.workers['fuzzy-rater']) {
+        this.workers['fuzzy-rater'] = new Worker('workers/fuzzy-rater.js')
+        this.handleFuzzyRater(this.workers['fuzzy-rater'])
       }
-      return Object.assign(entry, {score})
+      const rater = this.workers['fuzzy-rater']
+      rater.postMessage([{entry, value}, newContext])
     },
-    matchFile(file, value) {
-      const threshold = this.settings['suggestions.fuzzyThreshold']
-      // Chinese pinyin search
-      const chinese = /[\u4e00-\u9FA5]/g
-      let haystack = file.name
-      let transformed = false
-      if (!chinese.test(value) && chinese.test(haystack)) {
-        haystack = haystack.replace(chinese, char => ` ${pinyin(char)} `).trim()
-        transformed = true
-      }
-      const result = fuzzysort.single(value, haystack)
-      if (!result) return {matched: false}
-      return {
-        matched: result.score > threshold,
-        score: result.score,
-        indexes: transformed ? null : result.indexes,
+    handleFuzzyRater(rater) {
+      rater.onmessage = ({data}) => {
+        const {entry, context} = data
+        if (context.start !== this.searchedAt) return
+        const threshold = this.settings['suggestions.fuzzyThreshold']
+        if (entry.score === false || entry.score < threshold) return
+        this.resolve(entry)
       }
     },
     compareSuggestion(foo, bar) {
