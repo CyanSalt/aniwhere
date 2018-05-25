@@ -166,11 +166,13 @@ export default {
     },
     handleFuzzyRater(rater) {
       rater.onmessage = ({data}) => {
-        const {entry, context} = data
-        if (context.start !== this.searchedAt) return
-        const threshold = this.settings['suggestions.fuzzyThreshold']
-        if (entry.score === false || entry.score < threshold) return
-        this.resolve(entry)
+        requestIdleCallback(() => {
+          const {entry, context} = data
+          if (context.start !== this.searchedAt) return
+          const threshold = this.settings['suggestions.fuzzyThreshold']
+          if (entry.score === false || entry.score < threshold) return
+          this.resolve(entry)
+        })
       }
     },
     compareSuggestion(foo, bar) {
