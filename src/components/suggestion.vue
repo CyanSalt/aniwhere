@@ -73,15 +73,14 @@ export default {
   },
   methods: {
     resize() {
-      this.$nextTick(() => {
-        // const height = document.body.scrollHeight + 12
-        const length = Math.min(this.suggestions.length, 6)
-        if (length === this.recentItemCount) return
-        this.recentItemCount = length
-        const height = 12 + 54 + 1 +
-          (36 * length) + (8 * (length ? length + 1 : 0))
-        ipcRenderer.send('resize/height', height)
-      })
+      // Note: body.scrollHeight will change at the next tick
+      // const height = document.body.scrollHeight + 12
+      const length = Math.min(this.suggestions.length, 6)
+      if (length === this.recentItemCount) return
+      this.recentItemCount = length
+      const height = 12 + 54 + 1 +
+        (36 * length) + (8 * (length ? length + 1 : 0))
+      ipcRenderer.send('resize/height', height)
     },
     search(value) {
       this.searchedAt = Date.now()
@@ -198,6 +197,6 @@ export default {
   list-style: none;
   /* (36 + 8) * 6 + 8 = 272 */
   max-height: 272px;
-  overflow: hidden;
+  overflow-y: auto;
 }
 </style>
