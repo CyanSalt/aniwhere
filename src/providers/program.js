@@ -9,7 +9,7 @@ export default function (value) {
     title: file.basename,
     subtitle: file.description || file.path,
     args: file.args,
-    icon: file.icon,
+    icon: file.icon || file.path,
     highlight: true,
   })
   return this.queryFiles(value, {paths, exts, mapper})
