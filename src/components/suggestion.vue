@@ -102,7 +102,7 @@ export default {
       this.resize()
     },
     queryFiles(value, {paths, exts, mapper}) {
-      const ttl = this.settings['suggestions.caching']
+      const ttl = this.settings['suggestions.files.caching']
       const cacheKey = exts.join(',')
       let cache = this.cache[cacheKey]
       if (!cache) {
@@ -168,7 +168,7 @@ export default {
         requestIdleCallback(() => {
           const {entry, context} = data
           if (context.start !== this.searchedAt) return
-          const threshold = this.settings['suggestions.fuzzyThreshold']
+          const threshold = this.settings['suggestions.files.fuzzyThreshold']
           if (entry.score === false || entry.score < threshold) return
           this.resolve(entry)
         })

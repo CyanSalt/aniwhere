@@ -1,7 +1,7 @@
 /** @this Vue */
 export default function (value) {
-  const paths = this.settings['suggestions.documentPaths']
-  const exts = this.settings['suggestions.documentExts']
+  const paths = this.settings['suggestions.files.documentPaths']
+  const exts = this.settings['suggestions.files.documentExts']
   const mapper = file => ({
     type: 'file',
     category: 'document',

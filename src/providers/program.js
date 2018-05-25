@@ -1,7 +1,7 @@
 /** @this Vue */
 export default function (value) {
-  const paths = this.settings['suggestions.programPaths']
-  const exts = this.settings['suggestions.programExts']
+  const paths = this.settings['suggestions.files.programPaths']
+  const exts = this.settings['suggestions.files.programExts']
   const mapper = file => ({
     type: 'file',
     category: 'program',
