@@ -14,6 +14,7 @@ import SuggestionItem from './suggestion-item'
 import {state} from '../plugins/flux'
 
 import queryCalculation from '../providers/calculator'
+import queryCalendar from '../providers/calendar'
 import queryPrograms from '../providers/program'
 import queryDocuments from '../providers/document'
 import querySearchEngines from '../providers/search-engine'
@@ -25,6 +26,7 @@ export default {
   data() {
     return {
       providers: [
+        queryCalendar,
         queryCalculation,
         queryPrograms,
         queryDocuments,

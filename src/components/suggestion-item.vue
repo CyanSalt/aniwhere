@@ -122,7 +122,8 @@ export default {
 .suggestion-item.search-engine .tag {
   color: #6699cc;
 }
-.suggestion-item.calculator .tag {
+.suggestion-item.calculator .tag,
+.suggestion-item.calendar .tag {
   color: #99c794;
 }
 </style>

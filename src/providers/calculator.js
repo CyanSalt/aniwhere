@@ -28,7 +28,7 @@ export default function (value) {
     type: 'clipboard',
     category: 'calculator',
     link: String(result),
-    title: result,
+    title: `<strong>${result}</strong>`,
     subtitle: expression,
     score: 1,
   }
