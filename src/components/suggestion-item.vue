@@ -11,6 +11,7 @@
 <script>
 import {remote, clipboard} from 'electron'
 import {spawn} from 'child_process'
+import {state} from '../plugins/flux'
 
 export default {
   props: {
@@ -26,11 +27,17 @@ export default {
       icon: null,
     }
   },
-  created() {
-    if (this.data.icon) {
+  computed: {
+    settings: state('global/settings'),
+  },
+  mounted() {
+    const showFileIcons = this.settings['suggestions.files.showFileIcon']
+    if (this.data.icon && showFileIcons) {
       remote.app.getFileIcon(this.data.icon, (err, icon) => {
         err || (this.icon = icon.toDataURL())
       })
+    } else {
+      this.icon = null
     }
   },
   methods: {

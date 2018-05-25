@@ -9,6 +9,7 @@
     "%AppData%\\Microsoft\\Windows\\Start Menu\\Programs"
   ],
   "suggestions.files.programExts": [".exe", ".lnk"],
+  "suggestions.files.showFileIcon": true,
   "suggestions.searchEngines": [
     {
       "name": "Google",
