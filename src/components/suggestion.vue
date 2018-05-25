@@ -132,8 +132,10 @@ export default {
     },
     handleFileSearcher(searcher, args) {
       searcher.onmessage = ({data}) => {
+        const followSymbolLinks =
+          this.settings['suggestions.files.followSymbolLinks']
         const {info, context} = data
-        if (info.shortcut) {
+        if (info.shortcut && followSymbolLinks) {
           try {
             const details = remote.shell.readShortcutLink(info.path)
             searcher.postMessage(['shortcut', {info, details}, context])

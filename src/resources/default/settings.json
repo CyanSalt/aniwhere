@@ -3,6 +3,7 @@
   "suggestions.files.caching": 60,
   "suggestions.files.documentPaths": [],
   "suggestions.files.documentExts": [".pdf", ".md", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"],
+  "suggestions.files.followSymbolLinks": true,
   "suggestions.files.fuzzyThreshold": -8000,
   "suggestions.files.programPaths": [
     "%ProgramData%\\Microsoft\\Windows\\Start Menu\\Programs",
