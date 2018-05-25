@@ -27,7 +27,7 @@ const options = {
   asar: true,
   icon: ICON_PATH,
   ignore: [
-    '^/(?!src|package\\.json|window\\.js)',
+    '^/(?!node_modules|src|package\\.json|window\\.js)',
     '^/src/(components|plugins|providers|resources|storage)($|/)',
     '^/src/assets/.*\\.(ico|icns)$',
   ],
