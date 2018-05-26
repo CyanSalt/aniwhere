@@ -104,21 +104,24 @@ export default {
       this.resize()
     },
     queryFiles(value, {paths, exts, mapper}) {
-      const ttl = this.settings['suggestions.files.caching']
+      const ttl = this.settings['presets.highPerformance'] === 'memory' ?
+        0 : this.settings['suggestions.files.caching']
       const cacheKey = exts.join(',')
-      let cache = this.cache[cacheKey]
-      if (!cache) {
-        cache = {list: [], cachedAt: 0}
-        this.cache[cacheKey] = cache
-      }
       const start = this.searchedAt
-      if (start - cache.cachedAt < ttl * 1000) {
-        for (const file of cache.list) {
-          this.resolveFile({file, value, mapper}, {start})
+      if (ttl > 0) {
+        let cache = this.cache[cacheKey]
+        if (!cache) {
+          cache = {list: [], cachedAt: 0}
+          this.cache[cacheKey] = cache
         }
-        return []
+        if (start - cache.cachedAt < ttl * 1000) {
+          for (const file of cache.list) {
+            this.resolveFile({file, value, mapper}, {start})
+          }
+          return []
+        }
+        cache.cachedAt = start
       }
-      cache.cachedAt = start
       if (!this.workers['file-searcher']) {
         this.workers['file-searcher'] = new Worker('workers/file-searcher.js')
       }
@@ -134,7 +137,8 @@ export default {
     },
     handleFileSearcher(searcher, args) {
       searcher.onmessage = ({data}) => {
-        const followSymbolLinks =
+        const highPerformance = this.settings['presets.highPerformance']
+        const followSymbolLinks = highPerformance !== 'speed' &&
           this.settings['suggestions.files.followSymbolLinks']
         const {info, context} = data
         if (info.shortcut && followSymbolLinks) {
@@ -145,9 +149,11 @@ export default {
           } catch (error) {}
         }
         const {start, cacheKey} = context
-        const cache = this.cache[cacheKey]
-        if (cache && start === cache.cachedAt) {
-          cache.list.push(info)
+        if (highPerformance !== 'memory') {
+          const cache = this.cache[cacheKey]
+          if (cache && start === cache.cachedAt) {
+            cache.list.push(info)
+          }
         }
         if (start !== this.searchedAt) {
           return

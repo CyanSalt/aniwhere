@@ -31,7 +31,9 @@ export default {
     settings: state('global/settings'),
   },
   mounted() {
-    const showFileIcons = this.settings['suggestions.files.showFileIcon']
+    const highPerformance = this.settings['presets.highPerformance']
+    const showFileIcons = highPerformance !== 'speed' &&
+      this.settings['suggestions.files.showFileIcons']
     if (this.data.icon && showFileIcons) {
       remote.app.getFileIcon(this.data.icon, (err, icon) => {
         err || (this.icon = icon.toDataURL())
