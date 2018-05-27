@@ -1,6 +1,6 @@
 {
   "presets.highPerformance": "none",
-  "suggestions.categoryOrder": ["calculator", "program", "document", "search-engine"],
+  "suggestions.categoryOrder": ["calendar", "calculator", "program", "document", "search-engine"],
   "suggestions.files.caching": 60,
   "suggestions.files.documentPaths": [],
   "suggestions.files.documentExts": [".pdf", ".md", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"],
