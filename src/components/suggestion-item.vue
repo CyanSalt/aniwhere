@@ -1,6 +1,6 @@
 <template>
   <li :class="['suggestion-item', data.category]" :tabindex="index"
-    @click="select" @keyup.enter="select">
+    @click="select" @contextmenu="select" @keyup.enter="select">
     <span class="tag"></span>
     <img class="icon" :src="icon" v-if="icon"></span>
     <span class="title" v-html="data.title"></span>
@@ -45,14 +45,23 @@ export default {
   methods: {
     select(e) {
       this.$flux.emit('suggestions/focus', this.index)
+      let signal = true
+      if (e.ctrlKey || e.button === 2) {
+        signal = this.gesture()
+      } else {
+        signal = this.execute()
+      }
+      if (signal) {
+        remote.getCurrentWindow().hide()
+      }
+    },
+    execute() {
       switch (this.data.type) {
         case 'hyperlink':
           remote.shell.openExternal(this.data.link)
           break
         case 'file':
-          if (e.ctrlKey) {
-            remote.shell.showItemInFolder(this.data.link)
-          } else if (this.data.args) {
+          if (this.data.args) {
             spawn(this.data.link, this.data.args)
           } else {
             remote.shell.openItem(this.data.link)
@@ -63,7 +72,20 @@ export default {
           break
         // no default
       }
-      remote.getCurrentWindow().hide()
+      return true
+    },
+    gesture() {
+      switch (this.data.type) {
+        case 'hyperlink':
+          clipboard.writeText(this.data.link)
+          break
+        case 'file':
+          remote.shell.showItemInFolder(this.data.link)
+          return true
+        default:
+          this.execute()
+      }
+      return false
     }
   },
 }
