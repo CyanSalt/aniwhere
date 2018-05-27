@@ -32,9 +32,10 @@ export default {
   },
   created() {
     // custom script
+    this.$flux.set('global/defaultSettings', settings)
     this.$storage.require('custom.js', init => init(this))
     this.$storage.load('settings.json', (err, data) => {
-      data = err ? settings : Object.assign(settings, data)
+      data = err ? settings : Object.assign({}, settings, data)
       this.$flux.set('global/settings', data)
     })
   },
