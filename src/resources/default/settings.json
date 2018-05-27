@@ -17,5 +17,6 @@
       "name": "Google",
       "url": "https://www.google.com/search?q=%W"
     }
-  ]
+  ],
+  "suggestions.snippets": []
 }

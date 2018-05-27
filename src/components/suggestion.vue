@@ -18,6 +18,7 @@ import queryCalendar from '../providers/calendar'
 import queryPrograms from '../providers/program'
 import queryDocuments from '../providers/document'
 import querySearchEngines from '../providers/search-engine'
+import querySnippets from '../providers/snippet'
 
 export default {
   components: {
@@ -26,6 +27,7 @@ export default {
   data() {
     return {
       providers: [
+        querySnippets,
         queryCalendar,
         queryCalculation,
         queryPrograms,
