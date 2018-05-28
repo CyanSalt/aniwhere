@@ -13,12 +13,12 @@ import debounce from 'lodash.debounce'
 import SuggestionItem from './suggestion-item'
 import {state} from '../plugins/flux'
 
-import queryCalculation from '../providers/calculator'
-import queryCalendar from '../providers/calendar'
-import queryPrograms from '../providers/program'
-import queryDocuments from '../providers/document'
-import querySearchEngines from '../providers/search-engine'
-import querySnippets from '../providers/snippet'
+import queryCalculation from '../lib/providers/calculator'
+import queryCalendar from '../lib/providers/calendar'
+import queryPrograms from '../lib/providers/program'
+import queryDocuments from '../lib/providers/document'
+import querySearchEngines from '../lib/providers/search-engine'
+import querySnippets from '../lib/providers/snippet'
 
 export default {
   components: {
@@ -124,10 +124,7 @@ export default {
         }
         cache.cachedAt = start
       }
-      if (!this.workers['file-searcher']) {
-        this.workers['file-searcher'] = new Worker('workers/file-searcher.js')
-      }
-      const searcher = this.workers['file-searcher']
+      const searcher = this.getWorker('file-searcher')
       this.handleFileSearcher(searcher, {value, mapper})
       for (const originalPath of paths) {
         const path = originalPath.replace(/%([^%]+)%/g, (full, name) => {
@@ -168,11 +165,7 @@ export default {
       const entry = mapper(file)
       if (!entry) return
       entry.originalName = file.name
-      if (!this.workers['fuzzy-rater']) {
-        this.workers['fuzzy-rater'] = new Worker('workers/fuzzy-rater.js')
-        this.handleFuzzyRater(this.workers['fuzzy-rater'])
-      }
-      const rater = this.workers['fuzzy-rater']
+      const rater = this.getWorker('fuzzy-rater')
       rater.postMessage([{entry, value}, newContext])
     },
     handleFuzzyRater(rater) {
@@ -197,6 +190,18 @@ export default {
       }
       if (!diff) return 0
       return diff > 0 ? 1 : -1
+    },
+    getWorker(key) {
+      if (!this.workers[key]) {
+        this.workers[key] = new Worker(`lib/workers/${key}.js`)
+        switch (key) {
+          case 'fuzzy-rater':
+            this.handleFuzzyRater(this.workers[key])
+            break
+          // no default
+        }
+      }
+      return this.workers[key]
     },
   },
 }
