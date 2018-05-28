@@ -127,10 +127,7 @@ export default {
       }
       const searcher = this.workers['file-searcher']
       this.handleFileSearcher(searcher, {value, mapper})
-      for (const originalPath of paths) {
-        const path = originalPath.replace(/%([^%]+)%/g, (full, name) => {
-          return process.env[name] || full
-        })
+      for (const path of paths) {
         searcher.postMessage(['search', {path, exts}, {start, cacheKey}])
       }
       return []
@@ -192,6 +189,30 @@ export default {
       if (!diff) return 0
       return diff > 0 ? 1 : -1
     },
+    interpretPath(path) {
+      const windowsVariables = /%([^%]+)%/g
+      const unixVariables = /\$\{([^}]+)\}/g
+      const electronPaths = [
+        'home', 'appData', 'temp',
+        'desktop', 'documents', 'downloads',
+        'music', 'pictures', 'videos',
+      ]
+      const electronVariables = new RegExp(`\\[(${
+        electronPaths.join('|')
+      })\\]`, 'g')
+      const systemReplacement = (full, name) => {
+        return process.env[name] || full
+      }
+      const electronReplacement = (full, name) => {
+        try {
+          return remote.app.getPath(name)
+        } catch (e) {}
+        return full
+      }
+      return path.replace(windowsVariables, systemReplacement)
+        .replace(unixVariables, systemReplacement)
+        .replace(electronVariables, electronReplacement)
+    }
   },
 }
 </script>
