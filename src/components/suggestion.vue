@@ -193,7 +193,7 @@ export default {
       const windowsVariables = /%([^%]+)%/g
       const unixVariables = /\$\{([^}]+)\}/g
       const electronPaths = [
-        'home', 'appData', 'temp',
+        'aniwhere', 'home', 'appData', 'temp',
         'desktop', 'documents', 'downloads',
         'music', 'pictures', 'videos',
       ]
@@ -205,6 +205,9 @@ export default {
       }
       const electronReplacement = (full, name) => {
         try {
+          if (name === 'aniwhere') {
+            return remote.app.getAppPath()
+          }
           return remote.app.getPath(name)
         } catch (e) {}
         return full
