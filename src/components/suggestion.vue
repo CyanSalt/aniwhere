@@ -39,8 +39,8 @@ export default {
       selected: -1,
       cache: {},
       workers: {
-        'file-searcher': null,
-        'fuzzy-rater': null,
+        'file-searcher': new Worker('lib/workers/file-searcher.js'),
+        'fuzzy-rater': new Worker('lib/workers/fuzzy-rater.js'),
       },
       recentItemCount: 0,
     }
@@ -74,6 +74,7 @@ export default {
     this.$flux.on('suggestions/register', provider => {
       this.providers.unshift(provider)
     })
+    this.handleFuzzyRater(this.workers['fuzzy-rater'])
   },
   methods: {
     resize() {
@@ -124,7 +125,7 @@ export default {
         }
         cache.cachedAt = start
       }
-      const searcher = this.getWorker('file-searcher')
+      const searcher = this.workers['file-searcher']
       this.handleFileSearcher(searcher, {value, mapper})
       for (const originalPath of paths) {
         const path = originalPath.replace(/%([^%]+)%/g, (full, name) => {
@@ -165,7 +166,7 @@ export default {
       const entry = mapper(file)
       if (!entry) return
       entry.originalName = file.name
-      const rater = this.getWorker('fuzzy-rater')
+      const rater = this.workers['fuzzy-rater']
       rater.postMessage([{entry, value}, newContext])
     },
     handleFuzzyRater(rater) {
@@ -190,18 +191,6 @@ export default {
       }
       if (!diff) return 0
       return diff > 0 ? 1 : -1
-    },
-    getWorker(key) {
-      if (!this.workers[key]) {
-        this.workers[key] = new Worker(`lib/workers/${key}.js`)
-        switch (key) {
-          case 'fuzzy-rater':
-            this.handleFuzzyRater(this.workers[key])
-            break
-          // no default
-        }
-      }
-      return this.workers[key]
     },
   },
 }
