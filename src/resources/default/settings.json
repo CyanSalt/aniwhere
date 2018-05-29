@@ -9,7 +9,7 @@
     ".pdf", ".md", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"
   ],
   "suggestions.files.followSymbolLinks": true,
-  "suggestions.files.fuzzyThreshold": -8000,
+  "suggestions.files.fuzzyThreshold": 10000,
   "suggestions.files.programPaths": [
     "%ProgramData%\\Microsoft\\Windows\\Start Menu\\Programs",
     "%AppData%\\Microsoft\\Windows\\Start Menu\\Programs"

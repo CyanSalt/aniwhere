@@ -15,7 +15,7 @@
   "author": "CyanSalt",
   "license": "MIT",
   "dependencies": {
-    "fuzzysort": "^1.1.2"
+    "fuzzaldrin-plus": "^0.6.0"
   },
   "devDependencies": {
     "css-loader": "^0.28.11",

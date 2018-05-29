@@ -1,4 +1,4 @@
-const fuzzysort = require('fuzzysort')
+const fuzzaldrin = require('fuzzaldrin-plus')
 const pinyin = require('./pinyin')
 
 const langs = [
@@ -51,7 +51,24 @@ LanguageMap.prototype = {
   },
 }
 
-function matchFileEntry({entry, value}, context, callback) {
+function highlight(target, indexes) {
+  let previous = -2
+  const chars = target.split('')
+  for (const current of indexes) {
+    if (current >= chars.length) break
+    if (previous !== current - 1) {
+      if (previous >= 0) {
+        chars[previous] = `${chars[previous]}</strong>`
+      }
+      chars[current] = `<strong>${chars[current]}`
+    }
+    previous = current
+  }
+  chars[previous] = `${chars[previous]}</strong>`
+  return chars.join('')
+}
+
+function matchFileEntry({entry, value, threshold}, context, callback) {
   let haystack = entry.original.name
   // Translate languages
   const langmap = new LanguageMap()
@@ -66,16 +83,12 @@ function matchFileEntry({entry, value}, context, callback) {
       })
     }
   }
-  const result = fuzzysort.single(value, haystack)
-  if (result) {
-    entry.score = result.score
-    if (entry.highlight) {
-      const indexes = langmap.revise(result.indexes)
-      const pseudo = {target: entry.title, indexes}
-      entry.title = fuzzysort.highlight(pseudo, '<strong>', '</strong>')
-    }
-  } else {
-    entry.score = false
+  const score = fuzzaldrin.score(haystack, value)
+  if (score < threshold) return
+  entry.score = score
+  if (entry.highlight) {
+    const indexes = fuzzaldrin.match(haystack, value)
+    entry.title = highlight(entry.title, langmap.revise(indexes))
   }
   callback({entry, context})
 }

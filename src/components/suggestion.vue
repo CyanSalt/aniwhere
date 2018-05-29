@@ -167,16 +167,15 @@ export default {
       const entry = mapper(file)
       if (!entry) return
       entry.original = file
+      const threshold = this.settings['suggestions.files.fuzzyThreshold']
       const rater = this.workers['fuzzy-rater']
-      rater.postMessage([{entry, value}, newContext])
+      rater.postMessage([{entry, value, threshold}, newContext])
     },
     handleFuzzyRater(rater) {
       rater.onmessage = ({data}) => {
         requestIdleCallback(() => {
           const {entry, context} = data
           if (context.start !== this.searchedAt) return
-          const threshold = this.settings['suggestions.files.fuzzyThreshold']
-          if (entry.score === false || entry.score < threshold) return
           this.resolve(entry)
         })
       }
