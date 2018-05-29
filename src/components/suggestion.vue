@@ -35,6 +35,7 @@ export default {
         querySearchEngines,
       ],
       suggestions: [],
+      searchedValue: null,
       searchedAt: 0,
       selected: -1,
       cache: {},
@@ -88,6 +89,9 @@ export default {
       ipcRenderer.send('resize/height', height)
     },
     search(value) {
+      const originalValue = this.searchedValue
+      if (value === originalValue) return
+      this.searchedValue = value
       this.searchedAt = Date.now()
       if (!value) {
         this.suggestions = []
@@ -162,7 +166,7 @@ export default {
     resolveFile({file, value, mapper}, newContext) {
       const entry = mapper(file)
       if (!entry) return
-      entry.originalName = file.name
+      entry.original = file
       const rater = this.workers['fuzzy-rater']
       rater.postMessage([{entry, value}, newContext])
     },
