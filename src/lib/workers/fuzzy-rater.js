@@ -5,11 +5,7 @@ const langs = [
   {
     // Chinese
     regex: /[\u4e00-\u9FA5]/g,
-    mapper: char => {
-      const letters = pinyin(char)
-      if (!letters) return null
-      return letters.charAt(0).toUpperCase() + letters.slice(1)
-    }
+    mapper: pinyin,
   }
 ]
 
@@ -62,8 +58,9 @@ function matchFileEntry({entry, value}, context, callback) {
   for (const {regex, mapper} of langs) {
     if (!regex.test(value) && regex.test(haystack)) {
       haystack = haystack.replace(regex, (original, index) => {
-        const target = mapper(original)
+        let target = mapper(original)
         if (!target) return original
+        target = target.charAt(0).toUpperCase() + target.slice(1)
         langmap.record(index, target.length - 1)
         return target
       })
