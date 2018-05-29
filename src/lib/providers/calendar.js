@@ -4,7 +4,7 @@ function format(date) {
 
 /** @this Vue */
 export default function (value) {
-  const regex = /^\s*(?:([\d\-/.:TZ]+)\s+)?(\+|-)\s*(\d+)\s*(y|m|d|h)\s*$/i
+  const regex = /^(?:([\d\-/.:TZ]+)\s+)?(\+|-)\s*(\d+)\s*(y|m|d|h)$/i
   const matches = value.match(regex)
   if (!matches) return []
   let [from, operator, distance, unit] = matches.slice(1)

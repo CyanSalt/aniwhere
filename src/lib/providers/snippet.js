@@ -14,9 +14,9 @@ export default function (value) {
   for (const snippet of snippets.concat(internal)) {
     let matched = false
     if (snippet.rule) {
-      matched = new RegExp(snippet.rule).test(value.trim())
+      matched = new RegExp(snippet.rule).test(value)
     } else if (snippet.input) {
-      matched = snippet.input.toLowerCase() === value.trim().toLowerCase()
+      matched = snippet.input.toLowerCase() === value.toLowerCase()
     }
     if (matched && snippet.output) {
       result.push(snippet.output)

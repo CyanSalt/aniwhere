@@ -1,6 +1,6 @@
 /** @this Vue */
 export default function (value) {
-  const regex = /^\s*(\d+)\s*(\+|-|\*|\/)\s*(\d+)\s*$/
+  const regex = /^(\d+)\s*(\+|-|\*|\/)\s*(\d+)$/
   const matches = value.match(regex)
   if (!matches) return []
   let [first, operator, second] = matches.slice(1)

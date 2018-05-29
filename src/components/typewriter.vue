@@ -1,5 +1,5 @@
 <template>
-  <input class="typewriter" type="text" v-model="input" @focus="focus"
+  <input class="typewriter" type="text" v-model.trim="input" @focus="focus"
     :placeholder="i18n('Search Anything#!1')" autofocus>
 </template>
 
