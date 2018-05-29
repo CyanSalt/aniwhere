@@ -3,7 +3,7 @@
   "suggestions.categoryOrder": [
     "calendar", "calculator", "program", "document", "search-engine"
   ],
-  "suggestions.files.caching": 60,
+  "suggestions.files.caching": 300,
   "suggestions.files.documentPaths": ["[documents]", "[desktop]"],
   "suggestions.files.documentExts": [
     ".pdf", ".md", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx"

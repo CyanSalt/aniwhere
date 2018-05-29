@@ -127,6 +127,7 @@ export default {
           }
           return []
         }
+        cache.list = []
         cache.cachedAt = start
       }
       const searcher = this.workers['file-searcher']
