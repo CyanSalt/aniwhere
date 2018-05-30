@@ -9,15 +9,13 @@ const langs = [
   }
 ]
 
-function LanguageMap() {
-  this.dictionary = []
-}
-
-LanguageMap.prototype = {
-  name: 'LanguageMap',
+class LanguageMap {
+  constructor() {
+    this.dictionary = []
+  }
   empty() {
     return this.dictionary.length === 0
-  },
+  }
   record(index, diff) {
     const offset = this.dictionary.length ?
       this.dictionary[this.dictionary.length - 1].offset : 0
@@ -26,7 +24,7 @@ LanguageMap.prototype = {
       range: [index + offset, index + offset + diff],
       offset: offset + diff
     })
-  },
+  }
   revise(indexes) {
     if (!this.dictionary.length) return indexes
     return indexes.reduce((all, hit) => {
@@ -48,7 +46,7 @@ LanguageMap.prototype = {
       all.push(hit - distance)
       return all
     }, [])
-  },
+  }
 }
 
 function highlight(target, indexes) {
