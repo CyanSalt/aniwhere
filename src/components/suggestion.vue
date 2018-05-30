@@ -13,12 +13,12 @@ import debounce from 'lodash.debounce'
 import SuggestionItem from './suggestion-item'
 import {state} from '../plugins/flux'
 
-import queryCalculation from '../lib/providers/calculator'
-import queryCalendar from '../lib/providers/calendar'
-import queryPrograms from '../lib/providers/program'
-import queryDocuments from '../lib/providers/document'
-import querySearchEngines from '../lib/providers/search-engine'
-import querySnippets from '../lib/providers/snippet'
+import queryCalculation from '../providers/calculator'
+import queryCalendar from '../providers/calendar'
+import queryPrograms from '../providers/program'
+import queryDocuments from '../providers/document'
+import querySearchEngines from '../providers/search-engine'
+import querySnippets from '../providers/snippet'
 
 export default {
   components: {
@@ -40,8 +40,8 @@ export default {
       selected: -1,
       cache: {},
       workers: {
-        'file-searcher': new Worker('lib/workers/file-searcher.js'),
-        'fuzzy-rater': new Worker('lib/workers/fuzzy-rater.js'),
+        'file-searcher': new Worker('workers/file-searcher.js'),
+        'fuzzy-rater': new Worker('workers/fuzzy-rater.js'),
       },
       recentItemCount: 0,
     }
