@@ -1,6 +1,6 @@
 const {readdir, lstat} = require('original-fs')
 const {promisify} = require('util')
-const {join, basename} = require('path')
+const {join, basename, extname} = require('path')
 const plstat = promisify(lstat)
 
 const history = {
@@ -23,6 +23,8 @@ const history = {
 
 function searchFilesIn(args, context, callback) {
   const {path, exts} = args
+  const containsDirectory = exts.indexOf('/') !== -1
+  const containsAll = exts.indexOf('.*') !== -1
   readdir(path, (readdirerr, files) => {
     if (readdirerr) return
     for (const file of files) {
@@ -32,7 +34,7 @@ function searchFilesIn(args, context, callback) {
         if (lstaterr) return
         if (stats.isDirectory()) {
           searchFilesIn({path: fullpath, exts}, context, callback)
-          if (exts.indexOf('/') !== -1) {
+          if (containsDirectory) {
             const info = {
               name: file,
               basename: file,
@@ -42,10 +44,13 @@ function searchFilesIn(args, context, callback) {
           }
           return
         }
-        const ext = exts.find(extname => {
-          return file.slice(-extname.length) === extname
-        })
-        if (!ext) return
+        let ext = ''
+        if (containsAll) {
+          ext = extname(file)
+        } else {
+          ext = exts.find(name => file.slice(-name.length) === name)
+          if (!ext) return
+        }
         const info = {
           name: file,
           basename: basename(file, ext),
@@ -54,7 +59,7 @@ function searchFilesIn(args, context, callback) {
         }
         if (ext === '.lnk' && process.platform === 'win32') {
           info.shortcut = 1
-          if (exts.indexOf('/') !== -1) {
+          if (containsDirectory) {
             info.shortcut = 2
           }
         }
