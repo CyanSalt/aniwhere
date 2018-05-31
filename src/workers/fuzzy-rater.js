@@ -66,8 +66,8 @@ function highlight(target, indexes) {
   return chars.join('')
 }
 
-function matchFileEntry({entry, value, threshold}, context, callback) {
-  let haystack = entry.original.name
+function matchFileEntry({entry, value, threshold, by}, context, callback) {
+  let haystack = entry.original[by]
   // Translate languages
   const langmap = new LanguageMap()
   for (const {regex, mapper} of langs) {

@@ -124,7 +124,7 @@ export default {
       this.suggestions.splice(index, 0, suggestion)
       this.resize()
     },
-    queryFiles(value, {paths, exts, mapper}) {
+    queryFiles(value, {paths, exts, mapper, by}) {
       const ttl = this.settings['presets.highPerformance'] === 'memory' ?
         0 : this.settings['suggestions.files.caching']
       const cacheKey = exts.join(',')
@@ -137,7 +137,7 @@ export default {
         }
         if (start - cache.cachedAt < ttl * 1000) {
           for (const file of cache.list) {
-            this.resolveFile({file, value, mapper}, {start})
+            this.resolveFile({file, value, mapper, by}, {start})
           }
           return []
         }
@@ -145,7 +145,7 @@ export default {
         cache.cachedAt = start
       }
       const searcher = this.workers['file-searcher']
-      this.handleFileSearcher(searcher, {value, mapper})
+      this.handleFileSearcher(searcher, {value, mapper, by})
       for (const path of paths) {
         searcher.postMessage(['search', {path, exts}, {start, cacheKey}])
       }
@@ -178,13 +178,13 @@ export default {
         this.resolveFile(args, {start})
       }
     },
-    resolveFile({file, value, mapper}, newContext) {
+    resolveFile({file, value, mapper, by}, newContext) {
       const entry = mapper(file)
       if (!entry) return
       entry.original = file
       const threshold = this.settings['suggestions.files.fuzzyThreshold']
       const rater = this.workers['fuzzy-rater']
-      rater.postMessage([{entry, value, threshold}, newContext])
+      rater.postMessage([{entry, value, threshold, by}, newContext])
     },
     handleFuzzyRater(rater) {
       rater.onmessage = ({data}) => {

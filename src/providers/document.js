@@ -12,5 +12,5 @@ export default function (value) {
     icon: file.icon,
     highlight: true,
   })
-  return this.queryFiles(value, {paths, exts, mapper})
+  return this.queryFiles(value, {paths, exts, mapper, by: 'name'})
 }
