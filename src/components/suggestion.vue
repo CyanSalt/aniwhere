@@ -14,7 +14,7 @@ import SuggestionItem from './suggestion-item'
 import {state} from '../plugins/flux'
 
 import queryCalculation from '../providers/calculator'
-import queryCalendar from '../providers/calendar'
+import queryDates from '../providers/calendar'
 import queryPrograms from '../providers/program'
 import queryDocuments from '../providers/document'
 import querySearchEngines from '../providers/search-engine'
@@ -28,7 +28,7 @@ export default {
     return {
       providers: [
         querySnippets,
-        queryCalendar,
+        queryDates,
         queryCalculation,
         queryPrograms,
         queryDocuments,
@@ -50,6 +50,20 @@ export default {
     settings: state('global/settings'),
   },
   created() {
+    this.$flux.on('settings/loaded', settings => {
+      const disabled = this.settings['providers.internal.disabled']
+      const internal = {
+        'snippet': querySnippets,
+        'calendar': queryDates,
+        'calculator': queryCalculation,
+        'program': queryPrograms,
+        'document': queryDocuments,
+        'search-engine': querySearchEngines,
+      }
+      const purged = disabled.map(category => internal[category])
+      this.providers = this.providers
+        .filter(provider => purged.indexOf(provider) === -1)
+    })
     this.$flux.on('input/changed', debounce(value => {
       this.selected = -1
       this.search(value)

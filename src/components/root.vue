@@ -37,6 +37,7 @@ export default {
     this.$storage.load('settings.json', (err, data) => {
       data = err ? settings : Object.assign({}, settings, data)
       this.$flux.set('global/settings', data)
+      this.$flux.emit('settings/loaded', data)
     })
   },
   methods: {

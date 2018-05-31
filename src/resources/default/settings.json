@@ -1,5 +1,6 @@
 {
   "presets.highPerformance": "none",
+  "providers.internal.disabled": [],
   "suggestions.categoryOrder": [
     "calendar", "calculator", "program", "document", "search-engine"
   ],
