@@ -39,6 +39,7 @@ export default {
       searchedAt: 0,
       selected: -1,
       cache: {},
+      searcherArguments: {},
       workers: {
         'file-searcher': new Worker('workers/file-searcher.js'),
         'fuzzy-rater': new Worker('workers/fuzzy-rater.js'),
@@ -89,6 +90,7 @@ export default {
     this.$flux.on('suggestions/register', provider => {
       this.providers.unshift(provider)
     })
+    this.handleFileSearcher(this.workers['file-searcher'])
     this.handleFuzzyRater(this.workers['fuzzy-rater'])
   },
   methods: {
@@ -144,14 +146,14 @@ export default {
         cache.list = []
         cache.cachedAt = start
       }
+      this.searcherArguments[cacheKey] = {value, mapper, by}
       const searcher = this.workers['file-searcher']
-      this.handleFileSearcher(searcher, {value, mapper, by})
       for (const path of paths) {
         searcher.postMessage(['search', {path, exts}, {start, cacheKey}])
       }
       return []
     },
-    handleFileSearcher(searcher, args) {
+    handleFileSearcher(searcher) {
       searcher.onmessage = ({data}) => {
         const highPerformance = this.settings['presets.highPerformance']
         const followSymbolLinks = highPerformance !== 'speed' &&
@@ -174,6 +176,7 @@ export default {
         if (start !== this.searchedAt) {
           return
         }
+        const args = this.searcherArguments[cacheKey]
         args.file = info
         this.resolveFile(args, {start})
       }
