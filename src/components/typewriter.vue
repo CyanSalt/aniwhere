@@ -56,7 +56,16 @@ export default {
 }
 .typewriter .drag-handler {
   width: 20px;
+  line-height: 54px;
   -webkit-app-region: drag;
   user-select: none;
+}
+.typewriter .drag-handler::before {
+  content: '';
+  display: inline-block;
+  margin-left: 4px;
+  border-right: 6px solid rgba(0, 0, 0, 0.1);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
 }
 </style>
