@@ -43,14 +43,7 @@ function init() {
   frame.setMenuBarVisibility(false)
 
   globalShortcut.register('Alt+Shift+F', () => {
-    if (!frame) {
-      return
-    }
-    if (frame.isVisible()) {
-      frame.hide()
-    } else {
-      frame.show()
-    }
+    toggleFrame()
   })
   transferEvents()
 }
@@ -80,8 +73,22 @@ function createVisibleMenu() {
   return Menu.buildFromTemplate([
     {
       label: 'Toggle',
+      // For display only
+      accelerator: 'Alt+Shift+F',
       click() {
         toggleFrame()
+      }
+    },
+    {
+      label: 'Launch at login',
+      type: 'checkbox',
+      checked: app.getLoginItemSettings().openAtLogin,
+      click() {
+        const {openAtLogin} = app.getLoginItemSettings()
+        app.setLoginItemSettings({
+          openAtLogin: !openAtLogin,
+          args: ['--hide'],
+        })
       }
     },
     {
