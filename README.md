@@ -12,6 +12,7 @@ Find anything aniwhere.
 * Search results will be shown immediately below the input, press `↑` and `↓` to change focus between options.
 * Search-engine hyperlinks, Math expression outcome, etc. will be shown as well.
 * Press `Enter` or click to **select** the result. It will have different performance if you do with `ctrl` key.
+* Press `Alt+Shift+F`, or double click the tray icon, or select in the context menu of tray icon to open or close the searching window anywhere.
 
 ### Adapt to your own PC
 
