@@ -7,12 +7,12 @@ export default function (value) {
   const regex = /^(?:([\d\-/.:TZ]+)\s+)?(\+|-)\s*(\d+)\s*(y|m|d|h)$/i
   const matches = value.match(regex)
   if (!matches) return []
-  let [from, operator, distance, unit] = matches.slice(1)
+  let [from, operator, originalDistance, unit] = matches.slice(1)
   from = from ? new Date(from) : new Date()
-  distance = parseInt(distance, 10)
-  distance *= operator === '+' ? 1 : -1
+  originalDistance = parseInt(originalDistance, 10)
+  const distance = originalDistance * (operator === '+' ? 1 : -1)
   unit = unit.toLowerCase()
-  const expression = `${format(from)} ${operator} ${distance}${unit}`
+  const expression = `${format(from)} ${operator} ${originalDistance}${unit}`
   let target = from
   switch (unit) {
     case 'y':
@@ -41,7 +41,7 @@ export default function (value) {
     type: 'clipboard',
     category: 'calendar',
     link: result,
-    title: `<strong>${result}</strong>`,
+    title: `= <strong>${result}</strong>`,
     subtitle: expression,
     score: 1,
   }
