@@ -15,6 +15,8 @@ function init() {
     toggleFrame()
   })
 
+  const args = process.argv.slice(1)
+  const hide = args.indexOf('--hide') !== -1
   const {workAreaSize} = electron.screen.getPrimaryDisplay()
   frame = new BrowserWindow({
     title: 'Aniwhere',
@@ -27,6 +29,7 @@ function init() {
     skipTaskbar: true,
     frame: false,
     transparent: true,
+    show: !hide,
     webPreferences: {
       experimentalFeatures: true,
       nodeIntegrationInWorker: true,
