@@ -14,13 +14,11 @@
   },
   "author": "CyanSalt",
   "license": "MIT",
-  "dependencies": {
-    "fuzzaldrin-plus": "^0.6.0"
-  },
   "devDependencies": {
     "css-loader": "^0.28.11",
     "electron": "^2.0.2",
     "electron-packager": "^12.1.0",
+    "fuzzaldrin-plus": "^0.6.0",
     "lodash.debounce": "^4.0.8",
     "mini-css-extract-plugin": "^0.4.0",
     "png2icons": "^1.0.1",

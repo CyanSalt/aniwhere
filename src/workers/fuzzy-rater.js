@@ -1,4 +1,4 @@
-const fuzzaldrin = require('fuzzaldrin-plus')
+const fuzzaldrin = require('../build/fuzzaldrin-plus.min.js')
 const pinyin = require('./pinyin')
 
 const langs = [

@@ -19,6 +19,16 @@ try {
   fs.writeFileSync(ICON_PATH, output)
 }
 
+// Copy runtime dependencies
+const fuzzaldrin = 'fuzzaldrin-plus.min.js'
+try {
+  fs.accessSync(`src/build/${fuzzaldrin}`)
+} catch (error) {
+  console.log('Copying runtime dependency: fuzzaldrin-plus')
+  const from = 'node_modules/fuzzaldrin-plus/dist-browser'
+  fs.copyFileSync(`${from}/${fuzzaldrin}`, `src/build/${fuzzaldrin}`)
+}
+
 const options = {
   dir: '.',
   name: app.name,
@@ -27,7 +37,7 @@ const options = {
   asar: true,
   icon: ICON_PATH,
   ignore: [
-    '^/(?!node_modules|src|package\\.json|window\\.js)',
+    '^/(?!src|package\\.json|window\\.js)',
     '^/src/(components|plugins|providers|resources|storage)($|/)',
     '^/src/assets/.*\\.(ico|icns)$',
   ],
