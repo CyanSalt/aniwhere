@@ -1,6 +1,7 @@
 {
   "name": "aniwhere",
   "version": "1.0.0",
+  "productName": "Aniwhere",
   "description": "Find anything aniwhere.",
   "main": "window.js",
   "scripts": {
@@ -14,6 +15,9 @@
   },
   "author": "CyanSalt",
   "license": "MIT",
+  "engines": {
+    "node": ">=8.5.0"
+  },
   "devDependencies": {
     "css-loader": "^0.28.11",
     "electron": "^2.0.2",

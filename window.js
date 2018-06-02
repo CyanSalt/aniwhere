@@ -70,6 +70,7 @@ function createInvisibleMenu() {
 }
 
 function createVisibleMenu() {
+  const loginOptions = {args: ['--hide']}
   return Menu.buildFromTemplate([
     {
       label: 'Toggle',
@@ -82,13 +83,12 @@ function createVisibleMenu() {
     {
       label: 'Launch at login',
       type: 'checkbox',
-      checked: app.getLoginItemSettings().openAtLogin,
+      checked: app.getLoginItemSettings(loginOptions).openAtLogin,
       click() {
-        const {openAtLogin} = app.getLoginItemSettings()
-        app.setLoginItemSettings({
+        const {openAtLogin} = app.getLoginItemSettings(loginOptions)
+        app.setLoginItemSettings(Object.assign({
           openAtLogin: !openAtLogin,
-          args: ['--hide'],
-        })
+        }, loginOptions))
       }
     },
     {
