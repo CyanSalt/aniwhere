@@ -1,6 +1,6 @@
 {
   "name": "aniwhere",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "productName": "Aniwhere",
   "description": "Find anything aniwhere.",
   "main": "window.js",
@@ -27,9 +27,9 @@
     "mini-css-extract-plugin": "^0.4.0",
     "png2icons": "^1.0.1",
     "vue": "^2.5.16",
-    "vue-loader": "^15.2.2",
+    "vue-loader": "^15.2.4",
     "vue-template-compiler": "^2.5.16",
     "webpack": "^4.10.2",
-    "webpack-cli": "^2.1.4"
+    "webpack-cli": "^2.1.5"
   }
 }
