@@ -1,14 +1,18 @@
 const electron = require('electron')
 const {
   app, BrowserWindow, Menu, Tray,
-  globalShortcut, ipcMain,
+  globalShortcut, ipcMain, nativeImage,
 } = electron
 
 let frame = null
 let tray = null
 
 function init() {
-  tray = new Tray(`${__dirname}/src/assets/images/icon.png`)
+  let icon = `${__dirname}/src/assets/images/icon.png`
+  if (process.platform === 'darwin') {
+    icon = nativeImage.createFromPath(icon).resize({width: 18, height: 18})
+  }
+  tray = new Tray(icon)
   tray.setContextMenu(createVisibleMenu())
   tray.setToolTip('Aniwhere')
   tray.on('double-click', () => {

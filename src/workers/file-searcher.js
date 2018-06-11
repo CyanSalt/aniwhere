@@ -30,9 +30,8 @@ function searchFilesIn(args, context, callback) {
     for (const file of files) {
       const fullpath = join(path, file)
       if (history.hit(fullpath)) return
-      lstat(fullpath, (lstaterr, stats) => {
-        if (lstaterr) return
-        if (stats.isDirectory()) {
+      fileOrDirectory(fullpath, isDirectory => {
+        if (isDirectory) {
           searchFilesIn({path: fullpath, exts}, context, callback)
           if (containsDirectory) {
             const info = {
@@ -94,6 +93,17 @@ function resolveShortcut(args, context, callback) {
     }
   }).catch(e => {}).then(() => {
     callback({info, context})
+  })
+}
+
+function fileOrDirectory(path, callback) {
+  if (process.platform === 'darwin' && path.slice(-4) === '.app') {
+    callback(false)
+    return
+  }
+  lstat(path, (err, stats) => {
+    if (err) return
+    callback(stats.isDirectory())
   })
 }
 

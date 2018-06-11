@@ -13,9 +13,10 @@
   "suggestions.files.fuzzyThreshold": 10000,
   "suggestions.files.programPaths": [
     "%ProgramData%\\Microsoft\\Windows\\Start Menu\\Programs",
-    "%AppData%\\Microsoft\\Windows\\Start Menu\\Programs"
+    "%AppData%\\Microsoft\\Windows\\Start Menu\\Programs",
+    "/Applications", "[home]/Applications"
   ],
-  "suggestions.files.programExts": [".exe", ".lnk"],
+  "suggestions.files.programExts": [".exe", ".lnk", ".app"],
   "suggestions.files.showFileIcons": true,
   "suggestions.searchEngines": [
     {
