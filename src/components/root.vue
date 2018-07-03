@@ -35,7 +35,8 @@ export default {
     this.$flux.set('global/defaultSettings', settings)
     this.$storage.require('custom.js', init => init(this))
     this.$storage.load('settings.json', (err, data) => {
-      data = err ? settings : Object.assign({}, settings, data)
+      const copied = JSON.parse(JSON.stringify(settings))
+      data = err ? copied : Object.assign({}, copied, data)
       this.$flux.set('global/settings', data)
       this.$flux.emit('settings/loaded', data)
       this.$flux.on('settings/save', () => {
