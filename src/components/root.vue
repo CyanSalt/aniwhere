@@ -38,6 +38,15 @@ export default {
       data = err ? settings : Object.assign({}, settings, data)
       this.$flux.set('global/settings', data)
       this.$flux.emit('settings/loaded', data)
+      this.$flux.on('settings/save', () => {
+        this.$storage.save('settings.json', Object.entries(settings)
+          .reduce((diff, [key, value]) => {
+            if (JSON.stringify(value) !== JSON.stringify(data[key])) {
+              diff[key] = data[key]
+            }
+            return diff
+          }, {}))
+      })
     })
   },
   methods: {
