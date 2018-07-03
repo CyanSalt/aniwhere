@@ -7,7 +7,6 @@ export default function (value) {
     category: 'search-engine',
     link: engine.url.replace('%W', encoded),
     title: this.i18n('Search by %N: %W#!2')
-      .replace('%N', engine.name).replace('%W', value),
-    score: -1,
+      .replace('%N', engine.name).replace('%W', value)
   }))
 }

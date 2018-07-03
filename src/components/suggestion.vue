@@ -1,7 +1,7 @@
 <template>
   <ul class="suggestion">
     <suggestion-item v-for="item, index in suggestions"
-      :key="`${ item.link }@${ index }`" :index="index" :data="item"
+      :key="itemID(item)" :index="index" :data="item"
       :active="index === selected"
       ></suggestion-item>
   </ul>
@@ -103,6 +103,9 @@ export default {
       const height = 12 + 54 + 1 +
         (36 * length) + (8 * (length ? length + 1 : 0))
       ipcRenderer.send('resize/height', height)
+    },
+    itemID(item) {
+      return `${item.key || item.link || item.title}@${item.category}`
     },
     search(value) {
       const originalValue = this.searchedValue

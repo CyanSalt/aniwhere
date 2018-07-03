@@ -43,6 +43,6 @@ export default function (value) {
     link: result,
     title: `= <strong>${result}</strong>`,
     subtitle: expression,
-    score: 1,
+    key: expression
   }
 }

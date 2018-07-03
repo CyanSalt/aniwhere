@@ -2,7 +2,7 @@ const internal = [
   {
     input: 'i love you',
     output: {
-      'title': '<strong>I love you, too ❤️</strong>',
+      title: '<strong>I love you, too ❤️</strong>',
     }
   }
 ]
