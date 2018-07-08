@@ -1,0 +1,139 @@
+{
+  "suggestions.files.followSymbolLinks": {
+    "title": "Follow symbol links in file searching",
+    "type": "checkbox"
+  },
+  "suggestions.files.showFileIcons": {
+    "title": "Show icons of suggested files",
+    "type": "checkbox"
+  },
+  "presets.highPerformance": {
+    "title": "Toggle high performance mode",
+    "type": "select",
+    "options": [
+      {
+        "value": "none",
+        "title": "Disabled"
+      },
+      {
+        "value": "memory",
+        "title": "Memory first (will disable some special effects)"
+      },
+      {
+        "value": "speed",
+        "title": "Speed first (will disable some special effects)"
+      }
+    ]
+  },
+  "providers.internal.disabled": {
+    "title": "Disable internal providers",
+    "type": "select",
+    "multiple": true,
+    "options": [
+      {
+        "value": "calendar",
+        "title": "Date calculator"
+      },
+      {
+        "value": "calculator",
+        "title": "Calculator"
+      },
+      {
+        "value": "program",
+        "title": "Search programs"
+      },
+      {
+        "value": "document",
+        "title": "Search documents"
+      },
+      {
+        "value": "search-engine",
+        "title": "Search engine entries"
+      }
+    ]
+  },
+  "suggestions.categoryOrder": {
+    "support": false,
+    "title": "Set order of suggestions in different categories",
+    "type": "order",
+    "options": [
+      {
+        "value": "calendar",
+        "title": "Date calculator"
+      },
+      {
+        "value": "calculator",
+        "title": "Calculator"
+      },
+      {
+        "value": "program",
+        "title": "Search programs"
+      },
+      {
+        "value": "document",
+        "title": "Search documents"
+      },
+      {
+        "value": "search-engine",
+        "title": "Search engine entries"
+      }
+    ]
+  },
+  "suggestions.files.caching": {
+    "support": false,
+    "title": "Specify seconds of caching for file entries",
+    "type": "number"
+  },
+  "suggestions.files.documentPaths": {
+    "support": false,
+    "title": "Include paths in document searching",
+    "type": "text",
+    "multiple": true
+  },
+  "suggestions.files.documentExts": {
+    "support": false,
+    "title": "Include extension names in document searching",
+    "type": "text",
+    "multiple": true
+  },
+  "suggestions.files.fuzzyThreshold": {
+    "support": false,
+    "title": "Specify the searching threshold of fuzzy file searcher",
+    "type": "number"
+  },
+  "suggestions.files.programPaths": {
+    "support": false,
+    "title": "Include paths in program searching",
+    "type": "text",
+    "multiple": true
+  },
+  "suggestions.files.programExts": {
+    "support": false,
+    "title": "Include extension names in program searching",
+    "type": "text",
+    "multiple": true
+  },
+  "suggestions.files.searchEngines": {
+    "support": false,
+    "title": "Manage search engines in suggestions",
+    "type": "form",
+    "multiple": true,
+    "scheme": [
+      {
+        "key": "name",
+        "title": "Name",
+        "type": "text"
+      },
+      {
+        "key": "url",
+        "title": "URL (use %W as query word placeholder)",
+        "type": "text"
+      }
+    ]
+  },
+  "suggestions.snippets": {
+    "support": false,
+    "title": "Customize snippets of suggestions",
+    "type": "external"
+  }
+}

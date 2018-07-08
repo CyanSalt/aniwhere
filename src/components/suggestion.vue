@@ -13,6 +13,7 @@ import debounce from 'lodash.debounce'
 import SuggestionItem from './suggestion-item'
 import {state} from '../plugins/flux'
 
+import querySettings from '../providers/setting'
 import queryCalculation from '../providers/calculator'
 import queryDates from '../providers/calendar'
 import queryPrograms from '../providers/program'
@@ -28,6 +29,7 @@ export default {
     return {
       providers: [
         querySnippets,
+        querySettings,
         queryDates,
         queryCalculation,
         queryPrograms,
