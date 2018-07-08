@@ -1,11 +1,13 @@
 {
   "suggestions.files.followSymbolLinks": {
     "title": "Follow symbol links in file searching#!5",
-    "type": "checkbox"
+    "type": "checkbox",
+    "default": true
   },
   "suggestions.files.showFileIcons": {
     "title": "Show icons of suggested files#!6",
-    "type": "checkbox"
+    "type": "checkbox",
+    "default": true
   },
   "presets.highPerformance": {
     "title": "Toggle high performance mode#!7",
@@ -13,7 +15,8 @@
     "options": [
       {
         "value": "none",
-        "title": "Disabled#!8"
+        "title": "Disabled#!8",
+        "default": true
       },
       {
         "value": "memory",

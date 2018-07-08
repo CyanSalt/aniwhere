@@ -160,6 +160,7 @@ export default {
 }
 .suggestion-item .information {
   display: flex;
+  flex-grow: 1;
 }
 .suggestion-item .title {
   overflow: hidden;

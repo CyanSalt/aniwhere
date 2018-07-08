@@ -2,6 +2,13 @@ import settings from '../assets/settings-ui.json'
 const entries = Object.entries(settings)
 const {hasOwnProperty} = Object.prototype
 
+function stringify(value, i18n) {
+  if (typeof value === 'boolean') {
+    return value ? i18n('Yes#!19') : i18n('No#!20')
+  }
+  return value
+}
+
 /** @this Vue */
 export default function (value) {
   value = value.trim()
@@ -19,6 +26,7 @@ export default function (value) {
       category: 'setting',
       link: query,
       title: this.i18n('Option: %T#!4').replace('%T', this.i18n(option.title)),
+      subtitle: option.default ? this.i18n('Default#!17') : null,
       value: option.value,
       key: `${query}[${option.value}]`
     }))
@@ -31,6 +39,8 @@ export default function (value) {
       category: 'setting',
       link: key,
       title: this.i18n('Setting: %T#!3').replace('%T', this.i18n(info.title)),
+      subtitle: info.default ? this.i18n('Default: %V#!18')
+        .replace('%V', stringify(info.default, this.i18n)) : null,
       value: null
     }))
 }
