@@ -43,8 +43,13 @@ function init() {
   frame.on('closed', () => {
     frame = null
   })
-  frame.setMenu(createInvisibleMenu())
-  frame.setMenuBarVisibility(false)
+  const menu = createInvisibleMenu()
+  if (process.platform === 'darwin') {
+    Menu.setApplicationMenu(menu)
+  } else {
+    frame.setMenu(menu)
+    frame.setMenuBarVisibility(false)
+  }
 
   globalShortcut.register('Alt+Shift+F', () => {
     toggleFrame()
@@ -55,21 +60,25 @@ function init() {
 function createInvisibleMenu() {
   return Menu.buildFromTemplate([
     {
-      label: 'Hide',
-      accelerator: 'Escape',
-      click() {
-        frame && frame.hide()
-      }
-    },
-    {
-      label: 'Toggle Developer Tools',
-      accelerator: 'CommandOrControl+Shift+I',
-      click() {
-        frame && frame.webContents.openDevTools({
-          mode: 'undocked'
-        })
-      }
-    },
+      label: app.getName(),
+      submenu: [
+        {
+          label: 'Hide',
+          accelerator: 'Escape',
+          click() {
+            frame && frame.hide()
+          }
+        },
+        {
+          role: 'toggledevtools',
+          click() {
+            frame && frame.webContents.openDevTools({
+              mode: 'undocked'
+            })
+          }
+        }
+      ]
+    }
   ])
 }
 
