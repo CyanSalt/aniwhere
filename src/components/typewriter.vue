@@ -2,6 +2,7 @@
   <div class="typewriter">
     <input class="input" type="text" v-model.trim="input" @focus="focus"
       :placeholder="i18n('Search Anything#!1')" autofocus>
+    <span class="icon-delete" @click="empty"></span>
     <div class="drag-handler"></div>
   </div>
 </template>
@@ -27,6 +28,9 @@ export default {
   methods: {
     focus() {
       this.$flux.emit('suggestions/focus', -1)
+    },
+    empty() {
+      this.input = ''
     }
   }
 }
@@ -67,5 +71,15 @@ export default {
   border-right: 6px solid rgba(0, 0, 0, 0.1);
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
+}
+.typewriter .icon-delete {
+  margin: 0 8px;
+  font-size: 18px;
+  line-height: 54px;
+  color: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+.typewriter .input:placeholder-shown + .icon-delete {
+  display: none;
 }
 </style>
