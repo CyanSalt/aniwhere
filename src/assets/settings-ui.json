@@ -1,54 +1,54 @@
 {
   "suggestions.files.followSymbolLinks": {
-    "title": "Follow symbol links in file searching",
+    "title": "Follow symbol links in file searching#!5",
     "type": "checkbox"
   },
   "suggestions.files.showFileIcons": {
-    "title": "Show icons of suggested files",
+    "title": "Show icons of suggested files#!6",
     "type": "checkbox"
   },
   "presets.highPerformance": {
-    "title": "Toggle high performance mode",
+    "title": "Toggle high performance mode#!7",
     "type": "select",
     "options": [
       {
         "value": "none",
-        "title": "Disabled"
+        "title": "Disabled#!8"
       },
       {
         "value": "memory",
-        "title": "Memory first (will disable some special effects)"
+        "title": "Memory first (will disable some special effects)#!9"
       },
       {
         "value": "speed",
-        "title": "Speed first (will disable some special effects)"
+        "title": "Speed first (will disable some special effects)#!10"
       }
     ]
   },
   "providers.internal.disabled": {
-    "title": "Disable internal providers",
+    "title": "Disable internal providers#!11",
     "type": "select",
     "multiple": true,
     "options": [
       {
         "value": "calendar",
-        "title": "Date calculator"
+        "title": "Date calculator#!12"
       },
       {
         "value": "calculator",
-        "title": "Calculator"
+        "title": "Calculator#!13"
       },
       {
         "value": "program",
-        "title": "Search programs"
+        "title": "Search programs#!14"
       },
       {
         "value": "document",
-        "title": "Search documents"
+        "title": "Search documents#!15"
       },
       {
         "value": "search-engine",
-        "title": "Search engine entries"
+        "title": "Search engine entries#!16"
       }
     ]
   },

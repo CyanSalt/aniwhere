@@ -2,5 +2,17 @@
   "Search Anything#!1": "一切尽可搜索",
   "Search by %N: %W#!2": "在 %N 中搜索: %W",
   "Setting: %T#!3": "配置：%T",
-  "Option: %T#!4": "选项：%T"
+  "Option: %T#!4": "选项：%T",
+  "Follow symbol links in file searching#!5": "在文件搜索时跟踪符号链接",
+  "Show icons of suggested files#!6": "展示搜索结果文件的图标",
+  "Toggle high performance mode#!7": "切换高性能模式",
+  "Disabled#!8": "禁用",
+  "Memory first (will disable some special effects)#!9": "内存优先（将禁用部分特效）",
+  "Speed first (will disable some special effects)#!10": "速度优先（将禁用部分特效）",
+  "Disable internal providers#!11": "禁用内置模块",
+  "Date calculator#!12": "日期计算",
+  "Calculator#!13": "计算器",
+  "Search programs#!14": "搜索程序",
+  "Search documents#!15": "搜索文档",
+  "Search engine entries#!16": "搜索引擎链接"
 }
