@@ -82,7 +82,7 @@ export default {
           // Note: `input/focus` will trigger `focus`
           this.$flux.emit('input/focus')
         } else {
-          this.$children[target].$el.focus()
+          this.$el.childNodes[target].focus()
         }
       }
     })
