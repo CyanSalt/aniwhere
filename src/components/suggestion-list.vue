@@ -22,6 +22,7 @@ import querySearchEngines from '../providers/search-engine'
 import querySnippets from '../providers/snippet'
 
 export default {
+  name: 'suggestion-list',
   components: {
     'suggestion-item': SuggestionItem,
   },

@@ -9,6 +9,7 @@
 
 <script>
 export default {
+  name: 'query-input',
   computed: {
     input: {
       get() {

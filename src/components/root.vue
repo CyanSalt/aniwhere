@@ -1,22 +1,22 @@
 <template>
   <div id="main" @keydown.up="prev" @keydown.down="next">
-    <typewriter ref="typewriter"></typewriter>
+    <query-input ref="typewriter"></query-input>
     <div class="divider" v-show="input"></div>
-    <suggestion ref="suggestion"></suggestion>
+    <suggestion-list ref="suggestion"></suggestion-list>
   </div>
 </template>
 
 <script>
-import Typewriter from './typewriter'
-import Suggestion from './suggestion'
+import QueryInput from './query-input'
+import SuggestionList from './suggestion-list'
 import {state} from '../plugins/flux'
 import settings from '../resources/default/settings.json'
 
 export default {
   el: '#main',
   components: {
-    'typewriter': Typewriter,
-    'suggestion': Suggestion,
+    'query-input': QueryInput,
+    'suggestion-list': SuggestionList,
   },
   computed: {
     input: state('input/text')

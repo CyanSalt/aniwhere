@@ -8,11 +8,14 @@
       <span class="subtitle" v-if="data.subtitle">{{ data.subtitle }}</span>
     </div>
     <div class="indicator" v-if="data.type === 'setting'">
-      <checkbox :checked="settings[data.link]" v-if="settingUI.type === 'checkbox'"></checkbox>
+      <pretty-checkbox :checked="settings[data.link]"
+        v-if="settingUI.type === 'checkbox'"></pretty-checkbox>
       <template v-else-if="settingUI.type === 'select'">
         <span class="icon-more" v-if="data.value === null"></span>
-        <checkbox :checked="settings[data.link].indexOf(data.value) !== -1" v-else-if="settingUI.multiple"></checkbox>
-        <checkbox :checked="settings[data.link] === data.value" v-else></checkbox>
+        <pretty-checkbox :checked="settings[data.link].indexOf(data.value) !== -1"
+          v-else-if="settingUI.multiple"></pretty-checkbox>
+        <pretty-checkbox :checked="settings[data.link] === data.value"
+          v-else></pretty-checkbox>
       </template>
     </div>
   </li>
@@ -21,13 +24,14 @@
 <script>
 import {remote, clipboard} from 'electron'
 import {spawn} from 'child_process'
-import Checkbox from './checkbox'
+import PrettyCheckbox from './pretty-checkbox'
 import {state} from '../plugins/flux'
 import settings from '../assets/settings-ui.json'
 
 export default {
+  name: 'suggestion-item',
   components: {
-    'checkbox': Checkbox
+    'pretty-checkbox': PrettyCheckbox,
   },
   props: {
     data: Object,
