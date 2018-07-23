@@ -87,7 +87,7 @@ const dictionary = {
 }
 
 const hans = Object.keys(dictionary)
-const cache = Object.assign({}, dictionary)
+const cache = {...dictionary}
 const collator = new Intl.Collator(['zh-CN'])
 
 function pinyin(target) {

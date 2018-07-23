@@ -99,9 +99,10 @@ function createVisibleMenu() {
       checked: app.getLoginItemSettings(loginOptions).openAtLogin,
       click() {
         const {openAtLogin} = app.getLoginItemSettings(loginOptions)
-        app.setLoginItemSettings(Object.assign({
+        app.setLoginItemSettings({
           openAtLogin: !openAtLogin,
-        }, loginOptions))
+          ...loginOptions
+        })
       }
     },
     {
